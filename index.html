@@ -1,0 +1,2117 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>PLOGGO 앱 소개</title>
+<meta name="description" content="쓰레기 많은 길로 코스를 짜 주고, 주운 쓰레기는 AI가 세어 주는 플로깅 앱 PLOGGO">
+<link rel="icon" href="img/app-icon.webp">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="icons.css">
+</head><body>
+<style>
+/* 레이아웃: 토스식 한 화면 한 메시지. 큰 한글 헤드라인과 폰 화면이 번갈아 나오고,
+   이용 흐름은 고정된 폰 하나에서 화면이 바뀐다. 라임은 강조 면에만 쓴다(앱 Startline 규칙). */
+:root {
+  --ink: #2A2F2C;
+  --lime: #EEFF77;
+  --lime-on: #151A0B;
+  --bg: #FFFFFF;
+  --soft: #F4F6F5;
+  --line: #E3E6E4;
+  --fg: #2A2F2C;
+  --fg-2: #5A5F5B;
+  --fg-3: #8A8F8B;
+  --dim: #BCC3BE;
+  --fg-sub: #3F4541;
+  --eco: #17855A;
+  --eco-bg: #E3F6EC;
+  --band: #242926;
+  --band-fg: #F4F6F5;
+  --band-2: #A8ADA9;
+  --band-card: #313733;
+  --btn: #2A2F2C;
+  --btn-fg: #FFFFFF;
+  --ghost: #F4F6F5;
+  --bezel: #161917;
+  --halo: #EEFF77;
+  --plastic: #3A75AE;
+  --can: #C97A17;
+  --paper: #12784F;
+  --glass: #7A63BC;
+  --general: #7D8783;
+  --shadow: 0 28px 60px rgba(25, 30, 36, .20);
+  --nav-bg: rgba(255, 255, 255, .86);
+  --font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1A1E1C; --soft: #242926; --line: #363C38;
+    --fg: #F1F3F2; --fg-2: #B7BEB9; --fg-3: #8A8F8B; --dim: #4C5450; --fg-sub: #D6DBD8;
+    --eco: #5CC596; --eco-bg: rgba(92, 197, 150, .14);
+    --band: #111413; --band-card: #242926;
+    --btn: #EEFF77; --btn-fg: #151A0B; --ghost: #2C322F;
+    --bezel: #0A0C0B; --halo: #D9EC5F;
+    --shadow: 0 28px 60px rgba(0, 0, 0, .45);
+    --nav-bg: rgba(26, 30, 28, .86);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1A1E1C; --soft: #242926; --line: #363C38;
+  --fg: #F1F3F2; --fg-2: #B7BEB9; --fg-3: #8A8F8B; --dim: #4C5450; --fg-sub: #D6DBD8;
+  --eco: #5CC596; --eco-bg: rgba(92, 197, 150, .14);
+  --band: #111413; --band-card: #242926;
+  --btn: #EEFF77; --btn-fg: #151A0B; --ghost: #2C322F;
+  --bezel: #0A0C0B; --halo: #D9EC5F;
+  --shadow: 0 28px 60px rgba(0, 0, 0, .45);
+  --nav-bg: rgba(26, 30, 28, .86);
+  color-scheme: dark;
+}
+
+html { scroll-padding-top: 68px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+h1, h2, h3, p, ol, ul, dl, dd, figure { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+h1, h2, h3 { text-wrap: balance; font-weight: 800; }
+img { display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--plastic); outline-offset: 3px; border-radius: 6px; }
+
+.wrap {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.section { padding-block: clamp(36px, 4vw, 58px); }
+/* 사진: 왼쪽 큰 사진 1장(단체 사진)과 오른쪽 작은 사진 2장. 칸 비율을 사진(16:9)에 가깝게 맞춰 양끝이 잘리지 않게 한다 */
+.photo-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px; aspect-ratio: 2.6 / 1; }
+.photo-slot { margin: 0; display: grid; place-items: center; border: 2px dashed var(--line); border-radius: 26px; background: var(--soft); color: var(--fg-3); overflow: hidden; }
+.photo-slot.wide { grid-column: 1; grid-row: 1 / span 2; }
+.photo-slot.filled { border: 0; background: none; }
+.photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+.photo-slot span { display: grid; justify-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+.photo-slot .ti { font-size: 30px; }
+
+mark {
+  background: linear-gradient(var(--lime), var(--lime)) no-repeat 0 0 / 100% 100%;
+  color: var(--lime-on);
+  padding: 0 .14em;
+  border-radius: .12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.eyebrow { font-size: 16px; font-weight: 700; color: var(--fg-2); margin-bottom: 18px; }
+h2 { font-size: clamp(32px, 4.4vw, 54px); line-height: 1.24; letter-spacing: -0.03em; }
+h3 { font-size: clamp(25px, 2.6vw, 34px); line-height: 1.32; letter-spacing: -0.025em; }
+.body { color: var(--fg-2); max-width: 30em; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 56px; padding: 0 26px; border-radius: 17px;
+  background: var(--btn); color: var(--btn-fg);
+  font-weight: 700; font-size: 17px; text-decoration: none;
+  transition: transform .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn.ghost { background: var(--ghost); color: var(--fg); }
+
+/* 폰 목업 */
+.phone {
+  --pw: 300px;
+  width: var(--pw);
+  max-width: 100%;
+  padding: calc(var(--pw) * .028);
+  background: var(--bezel);
+  border-radius: calc(var(--pw) * .15);
+  box-shadow: var(--shadow);
+}
+.phone img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 390 / 844;
+  border-radius: calc(var(--pw) * .125);
+  object-fit: cover;
+}
+
+/* 내비게이션 */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--nav-bg);
+  transition: box-shadow .3s ease;
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  backdrop-filter: saturate(1.4) blur(14px);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--line); }
+.nav-inner { position: relative; display: flex; align-items: center; gap: 28px; min-height: 68px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; letter-spacing: .02em; text-decoration: none; }
+.brand img { width: 32px; height: 32px; border-radius: 9px; }
+.nav-links { display: flex; gap: 26px; margin-left: auto; font-size: 15px; font-weight: 600; color: var(--fg-2); }
+.nav-links a { display: inline-grid; text-decoration: none; transition: color .25s; }
+/* 굵게 바뀌어도 옆 목차가 밀리지 않도록 굵은 글씨 폭을 미리 잡아 둔다 */
+.nav-links a::after { content: attr(data-label); height: 0; overflow: hidden; visibility: hidden; font-weight: 800; }
+.nav-links a:hover { color: var(--fg); }
+/* 지금 보고 있는 부분의 목차만 진하게, 나머지는 옅게 */
+.nav-links.has-on a { color: var(--fg-3); }
+.nav-links.has-on a.on, .nav-links.has-on a:hover { color: var(--fg); }
+.nav-links a.on { font-weight: 800; }
+.nav .btn { min-height: 42px; padding: 0 18px; border-radius: 13px; font-size: 15px; }
+
+/* 히어로 */
+/* 첫 화면은 내비게이션 아래 한 화면 높이에 글, 수상 내역, 폰, 캐릭터가 모두 들어오도록 크기를 화면 높이에 맞춘다 */
+.hero { box-sizing: border-box; overflow: hidden; display: flex; align-items: center; min-height: calc(100vh - 68px); min-height: calc(100svh - 68px); padding-block: clamp(20px, 3.4svh, 40px); }
+.hero > .wrap { flex: 1; min-width: 0; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 48px; align-items: center; }
+.hero .eyebrow { margin-bottom: clamp(10px, 1.8svh, 18px); }
+.hero h1 { font-size: clamp(40px, min(6.3vw, 8.2svh), 82px); line-height: 1.16; letter-spacing: -0.04em; }
+.lead { margin-top: clamp(14px, 2.4svh, 26px); font-size: clamp(17px, min(1.6vw, 2.5svh), 21px); line-height: 1.65; color: var(--fg-2); max-width: 25em; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(18px, 3.4svh, 38px); }
+.cta-row .ti { font-size: 21px; }
+/* 수상 내역: 카드 없이 흰 바탕 위에 두 공모전을 월계관으로 감싸 같은 크기의 시상 배지처럼 둔다 */
+.honors { max-width: 580px; margin-top: clamp(30px, 5.4svh, 58px); }
+/* 배지 폭은 글자 길이에 맞추고 대회 이름은 한 줄로 둔다. 두 배지가 한 줄에 안 들어가면 아래로 내려간다 */
+.honor-top { display: flex; flex-wrap: wrap; gap: 12px 22px; }
+.award { display: grid; grid-template-columns: 40px max-content 40px; gap: 4px; align-items: center; text-align: center; }
+.award .laurel { width: 40px; height: auto; color: var(--fg); }
+.award span { display: block; font-size: 12.5px; font-weight: 700; color: var(--fg-3); }
+.award b { display: block; margin-top: 1px; font-size: clamp(16px, 1.4vw, 18px); font-weight: 800; line-height: 1.25; letter-spacing: -0.02em; white-space: nowrap; }
+.award em { display: block; margin-top: 3px; font-size: 13.5px; font-style: normal; font-weight: 700; line-height: 1.45; color: var(--fg-2); white-space: nowrap; }
+.award em mark { padding: 0 .2em; border-radius: 3px; }
+.honor-list { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: var(--fg-2); }
+.honor-list li { display: flex; align-items: center; gap: 5px; }
+.honor-list .ti { font-size: 16px; color: var(--fg-3); }
+.req { margin-top: 18px; font-size: 14px; color: var(--fg-3); }
+.hero-visual { --hero-pw: clamp(220px, min(25.5vw, calc((100svh - 150px) / 2.3)), 312px); position: relative; display: grid; place-items: center; }
+.hero-visual > .phone { z-index: 2; justify-self: end; margin-right: calc(var(--hero-pw) * .7); }
+.hero-visual::before {
+  content: ""; position: absolute; width: min(460px, 92%); aspect-ratio: 1; border-radius: 50%;
+  background: var(--halo); top: 50%; left: calc(100% - var(--hero-pw) * 1.2); transform: translate(-50%, -50%);
+}
+.hero-visual .phone { --pw: var(--hero-pw); position: relative; }
+/* 캐릭터는 폰 목업 크기의 절반 이상으로 보이게 폰 너비만큼 잡고, 폰 오른쪽 아래 모서리에만 걸쳐 앱 화면을 덜 가린다 */
+.hero-mascot { position: absolute; z-index: 3; width: var(--hero-pw); height: auto; left: calc(100% - var(--hero-pw) * .92); bottom: -9%; filter: drop-shadow(0 14px 22px rgba(25, 30, 36, .2)); }
+@media (prefers-reduced-motion: no-preference) {
+  /* 앱 홈 _MascotBlob과 같은 곡선·시간(ploggo_2 기준 3.8초). 히어로 아래 경계 밖에 숨어 있다가 오른쪽 아래에서 튀어나온다 */
+  .hero-mascot { animation: mascotPop 3.8s cubic-bezier(.18, .9, .26, 1) .3s backwards, bob 3.6s ease-in-out 4.1s infinite; }
+}
+@keyframes laurelIn { from { opacity: 0; transform: scale(.5); } }
+@keyframes bob { 50% { transform: translateY(-10px) rotate(-3deg); } }
+@keyframes mascotPop { from { transform: translate(calc(var(--hero-pw) * .5), calc(var(--hero-pw) * 1.25 + 160px)); } }
+
+/* 컨셉: 문장이 화면 아래에서 올라오는 동안 한 줄씩 진해진다 */
+.thesis { background: var(--soft); }
+.thesis-lines { display: grid; gap: clamp(22px, 3.5vh, 40px); }
+.thesis-lines p { font-size: clamp(27px, 4.2vw, 54px); font-weight: 800; line-height: 1.32; letter-spacing: -0.035em; color: var(--dim); transition: color .5s ease; }
+.thesis-lines p.on { color: var(--fg); }
+.thesis-lines mark { padding-inline: .04em; background-size: 0% 100%; color: inherit; transition: background-size .7s cubic-bezier(.16, .85, .2, 1) .15s, color .5s ease; }
+.thesis-lines p.on mark { background-size: 100% 100%; color: var(--lime-on); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(44px, 5vw, 64px); }
+.facts div { background: var(--bg); border-radius: 24px; padding: 26px 26px 24px; }
+.facts dt { font-size: clamp(32px, 3.4vw, 44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.facts dd { margin-top: 8px; font-size: 15px; line-height: 1.6; color: var(--fg-2); }
+
+/* 이용 흐름 */
+.sec-head { margin-bottom: clamp(32px, 4.5vw, 56px); }
+.flow-grid { --pw: clamp(240px, 36vh, 330px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
+/* 단계 상자(82vh)의 가운데가 폰 높이(약 2.22배 폭)의 40% 지점에 오도록 단계 목록을 끌어올린다 */
+.flow-grid .steps { margin-top: calc(var(--pw) * .89 - 41vh); }
+/* 폰을 화면 세로 가운데에 고정하고, 가운데에 가장 가까운 단계의 화면을 보여 준다 */
+.flow-stage { position: sticky; top: calc(50vh - var(--pw) * 1.1); align-self: start; justify-self: center; }
+.flow-stage .phone { --pw: inherit; display: grid; }
+.flow-stage .phone > * { grid-area: 1 / 1; opacity: 0; transform: translateY(18px) scale(.97); transition: opacity .5s ease, transform .6s cubic-bezier(.16, .85, .2, 1); }
+.flow-stage .phone > .on { opacity: 1; transform: none; }
+/* 정산 화면: 바탕 화면 위에 도장·보상 카드·컨페티를 겹쳐 앱처럼 도장을 쿵 찍는다 */
+.finish-shot { position: relative; overflow: hidden; aspect-ratio: 390 / 844; border-radius: calc(var(--pw) * .125); }
+.fs-screen { position: absolute; inset: 0; }
+.phone .fs-screen img { position: absolute; height: auto; aspect-ratio: auto; border-radius: 0; }
+.phone .fs-screen .fs-base { left: 0; top: 0; width: 100%; aspect-ratio: 390 / 844; border-radius: calc(var(--pw) * .125); }
+.fs-card { filter: drop-shadow(0 6px 12px rgba(25, 30, 36, .12)); }
+.fs-confetti { position: absolute; inset: 0; pointer-events: none; }
+.fs-confetti i { position: absolute; left: 0; top: 0; border-radius: 2px; opacity: 0; }
+.step { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding-block: 24px; }
+.step-no { font-size: 17px; font-weight: 700; color: var(--fg-3); font-variant-numeric: tabular-nums; transition: color .3s; }
+.step h3, .step > p { transition: color .3s; }
+.step:not(.is-active) h3 { color: var(--fg-3); }
+.step:not(.is-active) > p { color: var(--fg-3); }
+.step.is-active .step-no { color: var(--fg); }
+.step > p { color: var(--fg-2); max-width: 26em; font-size: clamp(17px, 1.7vw, 19.5px); }
+.step h3 { font-size: clamp(27px, 3vw, 38px); }
+.note { font-size: 15.5px; color: var(--fg-3); }
+.step-phone { display: none; }
+.kinds { display: flex; flex-wrap: wrap; gap: 8px; }
+.kinds li { background: var(--c); color: #fff; font-size: 16.5px; font-weight: 700; padding: 8px 15px; border-radius: 12px; }
+.points { display: grid; gap: 2px; max-width: 440px; background: var(--soft); border-radius: 24px; padding: 20px 24px; font-variant-numeric: tabular-nums; }
+.points div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 0; font-size: 18.5px; }
+.points dt { color: var(--fg-2); }
+.points dd { font-weight: 800; transform-origin: right center; }
+.points .sum { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 16px; }
+.points .sum dt { color: var(--fg); font-weight: 800; font-size: 21px; }
+.points .sum dd { font-size: clamp(38px, 4vw, 48px); letter-spacing: -0.03em; line-height: 1.1; }
+/* 정산 연출: 줄마다 숫자가 딱딱 찍히고, 마지막에 합계가 크게 튀어나온다 */
+@media (prefers-reduced-motion: no-preference) {
+  /* 넓은 화면에서는 왼쪽 정산 화면의 도장 연출이 끝날 때까지 줄을 숨겨 둔다 */
+  .points.wait div { opacity: 0; }
+  .points.play div:not(.sum) { animation: rowIn .55s ease backwards; }
+  .points.play div:not(.sum) dd { animation: tick .7s cubic-bezier(.3, 1.6, .5, 1) backwards; }
+  .points.play div:nth-child(1), .points.play div:nth-child(1) dd { animation-delay: .2s; }
+  .points.play div:nth-child(2), .points.play div:nth-child(2) dd { animation-delay: .9s; }
+  .points.play div:nth-child(3), .points.play div:nth-child(3) dd { animation-delay: 1.6s; }
+  .points.play .sum { animation: rowIn .55s ease 2.3s backwards; }
+  .points.play .sum dd { animation: bigPop 1.2s cubic-bezier(.3, 1.5, .5, 1) 2.5s backwards; }
+}
+@keyframes rowIn { from { opacity: 0; } }
+@keyframes tick { from { opacity: 0; transform: scale(1.9); } }
+@keyframes bigPop { 0% { opacity: 0; transform: scale(.3); } 55% { opacity: 1; transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* 환경 영향 (다크 밴드) */
+.band { background: var(--band); color: var(--band-fg); clip-path: inset(0 var(--band-inset, 0px) round var(--band-r, 0px)); }
+.band .eyebrow { color: var(--band-2); }
+.impact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.impact-copy .body { color: var(--band-2); margin-top: 22px; }
+.source { margin-top: 10px; font-size: 13px; line-height: 1.6; color: #7E8581; }
+.impact-side { display: grid; justify-items: start; }
+.home-card { --u: 1.5; position: relative; box-sizing: border-box; width: min(100%, calc(350px * var(--u))); overflow: hidden; border-radius: calc(26px * var(--u)); background: #EDF4F3; color: #212C2C; padding: calc(20px * var(--u)); box-shadow: 0 30px 60px rgba(0, 0, 0, .35); }
+.hc-blob { position: absolute; right: calc(-40px * var(--u)); top: calc(-46px * var(--u)); width: calc(150px * var(--u)); height: calc(150px * var(--u)); border-radius: 50%; background: rgba(20, 69, 75, .06); }
+.hc-title { position: relative; font-size: calc(17px * var(--u)); font-weight: 800; letter-spacing: -0.4px; }
+.hc-row { position: relative; display: flex; align-items: flex-end; gap: calc(18px * var(--u)); margin-top: calc(16px * var(--u)); }
+.hc-gauge { position: relative; flex: none; width: calc(126px * var(--u)); height: calc(78px * var(--u)); }
+.hc-gauge svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.hc-track, .hc-fill { fill: none; stroke-width: 13; stroke-linecap: round; }
+.hc-track { stroke: #DCE8E7; }
+.hc-fill { stroke: #EEFF77; }
+.hc-gauge-label { position: absolute; left: 0; right: 0; bottom: calc(2px * var(--u)); display: grid; justify-items: center; gap: calc(3px * var(--u)); }
+.hc-gauge-label b { font-size: calc(24px * var(--u)); font-weight: 800; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.hc-gauge-label small { font-size: calc(14px * var(--u)); }
+.hc-gauge-label > span { font-size: calc(10.5px * var(--u)); font-weight: 600; color: #7F8D8C; line-height: 1.2; }
+.hc-stats { flex: 1; min-width: 0; display: grid; justify-items: start; }
+.hc-label { font-size: calc(11px * var(--u)); font-weight: 600; letter-spacing: .6px; color: #7F8D8C; }
+.hc-value { margin-top: calc(2px * var(--u)); font-size: calc(12.5px * var(--u)); font-weight: 600; color: #536160; white-space: nowrap; }
+.hc-value b { font-size: calc(19px * var(--u)); font-weight: 800; letter-spacing: -0.6px; color: #212C2C; font-variant-numeric: tabular-nums; }
+.hc-tree { display: flex; align-items: center; gap: calc(6px * var(--u)); margin-top: calc(10px * var(--u)); font-size: calc(12.5px * var(--u)); font-weight: 700; color: #536160; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hc-tree i { display: block; width: 1em; height: 1em; font-size: calc(15px * var(--u)); color: #17855A; }
+.hc-caption { margin-top: 14px; font-size: 14px; color: var(--band-2); }
+.hc-formula { display: grid; gap: 8px; width: 100%; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .1); }
+.hc-formula li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; font-size: 15px; color: var(--band-2); }
+.hc-formula b { color: var(--band-fg); }
+
+/* 좌우 분할 섹션 */
+.split { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 72px; align-items: center; }
+.split.reverse { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.split.reverse .split-media { order: 2; }
+.split-media { display: grid; justify-items: center; }
+.split-media .phone { --pw: 312px; }
+.split-copy .body { margin-top: 22px; }
+.act-tabs { display: grid; gap: 10px; margin-top: 32px; }
+.act-tab { width: 100%; display: flex; align-items: flex-start; gap: 16px; padding: 20px 22px; border: 2px solid transparent; border-radius: 22px; background: var(--soft); color: var(--fg); font: inherit; text-align: left; cursor: pointer; transition: border-color .3s, background .3s, box-shadow .3s, transform .25s; }
+.act-tab:hover { transform: translateY(-3px); }
+.act-tabs li.on .act-tab { border-color: var(--fg); background: var(--bg); box-shadow: 0 14px 30px rgba(25, 30, 36, .08); }
+.act-tab .n { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--bg); font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; transition: background .3s, color .3s; }
+.act-tabs li.on .act-tab .n { background: #2A2F2C; color: #EEFF77; }
+.act-tab .t { padding-top: 8px; }
+.act-tab b { display: block; font-size: 20px; line-height: 1.35; }
+.act-tab .t > span { display: block; margin-top: 6px; font-size: 15.5px; line-height: 1.65; color: var(--fg-2); }
+.badge-strip { margin-top: clamp(56px, 7vw, 96px); }
+.badge-strip .sub-head { margin-top: 0; }
+.badge-strip .badges { grid-template-columns: repeat(8, minmax(0, 1fr)); max-width: none; margin-top: 28px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.tags li { display: inline-flex; align-items: center; gap: 7px; background: var(--soft); border-radius: 12px; padding: 8px 14px; font-size: 15px; font-weight: 600; color: var(--fg-2); }
+.tags .ti { font-size: 18px; color: var(--eco); }
+/* 포인트 샵 교환 과정 시연 */
+.phone.demo .screen { position: relative; display: grid; overflow: hidden; border-radius: calc(var(--pw) * .125); }
+.phone.demo .screen > img, .phone.demo .screen > .scroll-shot { grid-area: 1 / 1; opacity: 0; transition: opacity .3s ease; }
+.phone.demo .screen > .on { opacity: 1; }
+.phone.demo .screen.instant > * { transition: none; }
+/* 스크롤 시연 화면: 머리와 입력창은 바탕 그림에 두고, 가운데 대화 목록만 창 안에서 올라간다 */
+.scroll-shot { position: relative; }
+.ss-win { position: absolute; left: 0; right: 0; overflow: hidden; }
+.phone .ss-win img { display: block; width: 100%; height: auto; aspect-ratio: auto; border-radius: 0; }
+/* 그래프 탭: 막대와 도넛 색 조각은 그림 위에 따로 그려 앱처럼 1.25초 동안 일정한 속도로 채운다 */
+.ss-move { position: relative; }
+.gcol { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.gcol i { display: block; width: 88.9%; height: var(--h); border-radius: 999px; background: #6E77D0; }
+.gcol.peak i { background: #4C58AE; }
+.gcol svg { display: block; flex: none; width: 100%; height: auto; margin-bottom: 16.67%; fill: #FFEA76; }
+.gdonut { position: absolute; height: auto; aspect-ratio: 1; }
+.gdonut circle { fill: none; stroke-width: 22; stroke-dasharray: var(--len) 100; transform: rotate(var(--rot)); transform-origin: 60px 60px; }
+@media (prefers-reduced-motion: no-preference) {
+  .graph-shot.on .gcol i { animation: gbarGrow 1.25s linear both; }
+  /* 도넛은 목록이 내려가기 시작할 때 12시 방향부터 시계 방향으로 이어 칠한다 */
+  .graph-shot.on .gdonut circle { animation: gSweep calc(var(--len) * 12.5ms) linear calc(1.9s + var(--at) * 12.5ms) both; }
+}
+@keyframes gbarGrow { from { height: 0; } }
+@keyframes gSweep { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+.cursor { position: absolute; z-index: 6; left: 78%; top: 82%; width: 26px; height: 26px; margin: -2px 0 0 -4px; font-size: 26px; pointer-events: none; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .35)); transition: left .75s cubic-bezier(.45, 0, .2, 1), top .75s cubic-bezier(.45, 0, .2, 1); }
+.cursor::after { content: ""; position: absolute; left: -10px; top: -12px; width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(42, 47, 44, .55); opacity: 0; }
+.cursor.click svg { animation: press .32s ease; }
+.cursor.click::after { animation: ripple .5s ease-out; }
+/* 그룹·뉴스 시연: 누르는 자리에 동그라미가 떴다가 사라진다 */
+.tap { position: absolute; z-index: 6; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: rgba(42, 47, 44, .28); box-shadow: 0 0 0 3px rgba(255, 255, 255, .95); opacity: 0; pointer-events: none; }
+.tap.go { animation: tap .65s ease-out; }
+@keyframes tap { 0% { opacity: 0; transform: scale(1.6); } 35% { opacity: 1; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.1); } }
+@keyframes press { 50% { transform: scale(.8); } }
+@keyframes ripple { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(1.6); } }
+.demo-steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 26px; }
+.demo-steps li { font-size: 14px; font-weight: 700; color: var(--fg-3); background: var(--soft); border-radius: 10px; padding: 6px 12px; transition: background .3s, color .3s; }
+.demo-steps li.on { background: var(--btn); color: var(--btn-fg); }
+.badges { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 22px; margin-top: 36px; max-width: 500px; }
+.badges img { width: 100%; height: auto; }
+/* 뱃지가 왼쪽부터 하나씩 같은 속도로 살짝 떴다가 내려앉는다(.lift는 스크립트가 차례로 붙인다) */
+.badge.lift img { animation: badgeLift .5s ease-in-out; }
+@keyframes badgeLift {
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 0 rgba(25, 30, 36, 0)); }
+  50% { transform: translateY(-14px); filter: drop-shadow(0 12px 10px rgba(25, 30, 36, .18)); }
+}
+
+/* 그룹 · 뉴스 */
+.together { background: var(--soft); }
+.center { text-align: center; }
+.center .body { margin: 22px auto 0; }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.duo-card { background: var(--bg); border-radius: 32px; padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 48px) 0; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+.duo-card h3 { font-size: clamp(24px, 2.4vw, 30px); }
+.duo-card p { color: var(--fg-2); }
+.duo-card .phone { --pw: 280px; margin: 28px auto -120px; }
+
+/* 마지막 CTA */
+.final { text-align: center; }
+.final-inner { display: grid; justify-items: center; gap: 22px; }
+.final img { width: 168px; height: auto; }
+.final h2 { font-size: clamp(38px, 5.6vw, 68px); }
+.final .body { margin-inline: auto; }
+
+footer { border-top: 1px solid var(--line); }
+.foot { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; padding-block: 32px 40px; font-size: 14px; color: var(--fg-3); }
+.foot .brand { font-size: 16px; color: var(--fg); }
+.foot .brand img { width: 26px; height: 26px; border-radius: 7px; }
+
+/* 컨셉 */
+/* 바로 아래 '이어 갈 일'이 라임이라, 문제 상자의 태그는 초록으로 구분한다 */
+.tag { justify-self: start; font-size: 13px; font-weight: 700; color: var(--eco); background: var(--eco-bg); border-radius: 8px; padding: 3px 10px; }
+.sub-head { font-size: clamp(22px, 2.4vw, 28px); line-height: 1.4; margin: clamp(48px, 6vw, 80px) 0 20px; }
+.problems { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.problem { background: var(--bg); border-radius: 26px; padding: 30px; display: grid; gap: 12px; align-content: start; }
+.problem.lift { animation: cardLift 1s ease-in-out; }
+@keyframes cardLift {
+  0%, 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(25, 30, 36, 0); }
+  50% { transform: translateY(-12px); box-shadow: 0 18px 30px rgba(25, 30, 36, .1); }
+}
+.problem h4 { font-size: clamp(21px, 2.1vw, 26px); line-height: 1.4; letter-spacing: -0.02em; font-weight: 800; margin: 0; }
+.problem p { color: var(--fg-2); font-size: 16px; }
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.plans li { position: relative; z-index: calc(3 - var(--k, 0)); background: var(--bg); border-radius: 22px; padding: 24px 26px; display: grid; gap: 8px; align-content: start; box-shadow: 0 6px 18px rgba(25, 30, 36, .05); }
+@media (prefers-reduced-motion: no-preference) {
+  .plans li { transition: transform .9s cubic-bezier(.3, 1.25, .5, 1) calc(var(--k, 0) * .5s), opacity .5s ease calc(var(--k, 0) * .5s); }
+  .plans.pre li { opacity: 0; transform: translateX(calc((-100% - 16px) * var(--k, 0) - 40px)); transition: none; }
+}
+.plan-icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: 6px; border-radius: 15px; background: var(--lime); color: var(--lime-on); font-size: 23px; }
+.plan-icon i { display: block; width: 1em; height: 1em; }
+.plans b { font-size: 18px; }
+.plans span:last-child { font-size: 15px; color: var(--fg-2); line-height: 1.6; }
+
+/* 주요 기능 목록 */
+.features { border-top: 1px solid var(--line); }
+.feature { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr) auto; gap: 28px; align-items: center; padding: 30px 4px; border-bottom: 1px solid var(--line); text-decoration: none; }
+.feature h3 { font-size: clamp(21px, 2vw, 26px); }
+.feature p { color: var(--fg-2); }
+.feature .go { font-size: 15px; font-weight: 700; color: var(--fg-3); white-space: nowrap; transition: color .2s; }
+.feature:hover .go { color: var(--fg); }
+
+/* 디자인 철학 */
+.palette { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.swatch { display: grid; gap: 2px; align-content: start; }
+.swatch i { display: block; aspect-ratio: 1 / 1.05; border-radius: 22px; background: var(--c); box-shadow: inset 0 0 0 1px rgba(127, 127, 127, .18); margin-bottom: 10px; transition: transform .35s cubic-bezier(.16, .85, .2, 1); }
+.swatch:hover i { transform: translateY(-6px); }
+.swatch b { font-size: 16px; }
+.swatch span { font-size: 13px; color: var(--fg-3); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.principle { background: var(--soft); border-radius: 26px; padding: 30px 28px; display: grid; gap: 12px; align-content: start; }
+.principle .key { justify-self: start; display: inline-flex; align-items: center; gap: 7px; min-height: 42px; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.key.lime { background: var(--lime); color: var(--lime-on); padding: 2px 14px; border-radius: 12px; }
+.key.dark { background: #161917; color: #EEFF77; padding: 2px 14px; border-radius: 12px; }
+.key.dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--c); }
+.key img { width: 46px; height: 38px; object-fit: contain; object-position: left center; }
+.principle h4 { font-size: 22px; line-height: 1.4; letter-spacing: -0.02em; font-weight: 800; margin: 0; }
+.principle .sub { font-size: 16.5px; font-weight: 600; line-height: 1.5; color: var(--fg-sub); margin-top: -6px; }
+.principle p { font-size: 16px; color: var(--fg-2); line-height: 1.7; }
+
+/* 캐릭터 */
+.char-band { background: var(--soft); }
+.char-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+.char-figure { position: relative; margin: 0; display: grid; place-items: center; }
+.char-figure::before { content: ""; position: absolute; width: min(500px, 96%); aspect-ratio: 1; border-radius: 50%; background: var(--bg); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.char-art { position: relative; width: min(470px, 84vw); }
+.char-art img { width: 100%; height: auto; filter: drop-shadow(0 18px 26px rgba(25, 30, 36, .16)); }
+.pin, .design-notes .num {
+  display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  background: #2A2F2C; color: #EEFF77; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums;
+}
+.pin { position: absolute; transform: translate(-50%, -50%); box-shadow: 0 0 0 4px rgba(255, 255, 255, .92); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.pin.hot { transform: translate(-50%, -50%) scale(1.35); }
+@media (prefers-reduced-motion: no-preference) {
+  .pin.hot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #2A2F2C; animation: ping 1.6s ease-out infinite; }
+}
+@keyframes ping { 0% { opacity: .6; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.9); } }
+.char-copy .body { margin-top: 22px; }
+.design-notes { margin-top: 28px; display: grid; gap: 4px; }
+.design-notes li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 14px 12px; margin-inline: -12px; border-radius: 18px; transition: background .25s; }
+.design-notes li.hot { background: var(--bg); }
+.design-notes b { display: block; font-size: 18px; margin-bottom: 4px; }
+.design-notes span:not(.num) { font-size: 16px; color: var(--fg-2); line-height: 1.7; }
+
+
+/* 아이콘 (Tabler Icons 서브셋은 icons.css) */
+.ti { line-height: 1; }
+.shutter i, .w-icon i, .cs-icon i, .hy-icon i, .chip i, .bbox > i, .cursor svg { display: block; width: 1em; height: 1em; }
+
+/* 모바일 메뉴 버튼 */
+.menu-btn { display: none; width: 42px; height: 42px; border: 0; border-radius: 13px; background: var(--ghost); color: var(--fg); font-size: 22px; cursor: pointer; }
+
+
+/* 이용 흐름 세부 기능 */
+.step-points { display: grid; gap: 10px; max-width: 28em; }
+.step-points li { display: flex; align-items: flex-start; gap: 12px; font-size: clamp(16px, 1.55vw, 17.5px); line-height: 1.55; color: var(--fg-2); }
+.step-points i { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--soft); color: var(--fg); font-size: 17px; margin-top: -2px; }
+.step:not(.is-active) .step-points li { color: var(--fg-3); }
+
+/* 핵심 기술 01: 경로 추천 시뮬레이터 */
+.route-sec { background: var(--soft); }
+.route-sec .sec-head .body, .vision-sec .sec-head .body { margin-top: 22px; max-width: 36em; }
+.route-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 36px; align-items: start; }
+.sim-card { background: var(--bg); border-radius: 30px; padding: 24px; box-shadow: 0 12px 30px rgba(25, 30, 36, .06); }
+.sim-hint { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--fg-2); }
+.sim-hint i { color: var(--eco); font-size: 18px; }
+.preset-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 16px; }
+.preset { display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--fg-2); font: 700 14px/1.2 var(--font); cursor: default; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+.preset.on { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+.map {
+  position: relative; height: 440px; border-radius: 22px; overflow: hidden; border: 1px solid #E3E6E4; color: #2A2F2C;
+  background-color: #E8ECE9;
+  background-image: linear-gradient(rgba(255, 255, 255, .55) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, .55) 2px, transparent 2px), linear-gradient(rgba(200, 212, 205, .35) 1px, transparent 1px), linear-gradient(90deg, rgba(200, 212, 205, .35) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 25px 25px, 25px 25px;
+}
+.map-park { position: absolute; background: rgba(23, 133, 90, .11); border-radius: 36% 64% 52% 48%; }
+.map-avoid { position: absolute; top: 10%; left: 38%; width: 118px; height: 82px; background: rgba(228, 87, 61, .14); border: 1.5px dashed #E4573D; clip-path: polygon(12% 0%, 92% 14%, 100% 82%, 70% 100%, 0% 76%); }
+.avoid-tag { position: absolute; z-index: 3; top: calc(10% + 28px); left: calc(38% + 12px); display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 8px; background: rgba(252, 238, 235, .95); border: 1px solid #F8D5CD; color: #B23A24; font-size: 11.5px; font-weight: 800; }
+.map-search { position: absolute; z-index: 5; top: 14px; left: 14px; right: 14px; height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 14px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(42, 47, 44, .1); font-size: 14px; font-weight: 700; overflow: hidden; white-space: nowrap; }
+.map-search i { color: #8A8F8B; }
+.map-svg { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; }
+.map-svg .direct { fill: none; stroke: rgba(228, 87, 61, .32); stroke-width: 2.5; stroke-dasharray: 6 6; }
+.route-line { fill: none; stroke: #2A2F2C; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 600; stroke-dashoffset: 0; }
+.route-line.draw { animation: drawLine .8s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes drawLine { from { stroke-dashoffset: 600; } }
+.pin-origin, .pin-hot, .pin-dest { position: absolute; z-index: 4; transition: left .45s cubic-bezier(.16, 1, .3, 1), top .45s cubic-bezier(.16, 1, .3, 1); }
+.pin-origin { width: 0; height: 0; }
+.pin-origin .heading { position: absolute; left: 0; top: 0; transform: rotate(var(--hd, 45deg)); transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
+.pin-origin .heading::before { content: ""; position: absolute; left: -8.5px; top: -22px; border-left: 8.5px solid transparent; border-right: 8.5px solid transparent; border-bottom: 17px solid #2A2F2C; }
+.pin-origin .dot { position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; box-sizing: border-box; border-radius: 50%; background: #2A2F2C; border: 4px solid #FFFFFF; box-shadow: 0 0 0 9px rgba(42, 47, 44, .12), 0 4px 12px rgba(42, 47, 44, .35); }
+.pin-hot { width: 34px; height: 42px; margin: -41px 0 0 -17px; transform-origin: 50% 100%; filter: drop-shadow(0 5px 11px rgba(25, 30, 36, .24)); }
+.pin-hot svg, .pin-dest .flag svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pin-hot svg path { fill: #2A2F2C; }
+.pin-hot i { position: absolute; left: 50%; top: 16px; display: block; width: 1em; height: 1em; margin: -.5em 0 0 -.5em; font-size: 16px; color: #EEFF77; }
+.pin-hot b { position: absolute; top: -8px; right: -9px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: #FFFFFF; color: #2A2F2C; font-size: 11px; line-height: 18px; text-align: center; box-shadow: 0 2px 6px rgba(0, 0, 0, .2); }
+.pin-hot.pop { animation: pinPop .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pinPop { from { transform: scale(.3); } }
+.pin-dest { display: flex; flex-direction: column; align-items: center; gap: 5px; transform: translate(-50%, -100%); }
+.pin-dest .eta { padding: 5px 11px; border-radius: 999px; background: #2A2F2C; color: #FFFFFF; border: 1.5px solid #EEFF77; font-size: 12.5px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; box-shadow: 0 6px 16px rgba(42, 47, 44, .22); }
+.pin-dest .flag { position: relative; display: block; width: 44px; height: 54px; filter: drop-shadow(0 5px 11px rgba(25, 30, 36, .24)); }
+.pin-dest .flag svg path { fill: #EEFF77; }
+.pin-dest .flag i { position: absolute; left: 50%; top: 21px; display: block; width: 1em; height: 1em; margin: -.5em 0 0 -.5em; font-size: 20px; color: #2A2F2C; }
+.map-sheet { position: absolute; z-index: 6; left: 14px; right: 14px; bottom: 14px; padding: 12px 16px 14px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 16px 38px rgba(25, 30, 36, .18); }
+.sheet-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sheet-meta { display: inline-flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; font-size: 13px; font-weight: 700; color: #5A5F5B; }
+.sheet-meta i { color: #17855A; }
+.sheet-meta i.muted { color: #8A8F8B; }
+.meta-factory { display: inline-flex; align-items: center; gap: 6px; }
+.sheet-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: #C8CFCB; margin-inline: 2px; }
+.course-btn { flex: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; padding: 5px 9px; border: 0; border-radius: 9px; background: #F4F6F5; color: #2A2F2C; font: 800 13px/1.2 var(--font); cursor: default; transition: background .2s; }
+.course-btn.spin { background: #EEFF77; }
+.course-btn.spin i { animation: spinCCW .6s linear infinite; }
+@keyframes spinCCW { to { transform: rotate(-360deg); } }
+.sheet-title { margin-top: 6px; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+.sheet-go { flex: none; display: flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 16px; border-radius: 12px; background: #2A2F2C; color: #FFFFFF; font-size: 15px; font-weight: 800; text-decoration: none; }
+.sheet-go i { color: #EEFF77; font-size: 18px; }
+.algo-panel { display: grid; gap: 14px; }
+.algo-steps { display: grid; gap: 10px; }
+.algo-step { box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 2px solid transparent; border-radius: 22px; background: var(--bg); color: var(--fg); font: inherit; text-align: left; cursor: default; transition: border-color .25s, transform .25s, box-shadow .25s; }
+.algo-step.on { border-color: var(--fg); box-shadow: 0 14px 30px rgba(25, 30, 36, .08); }
+.algo-step .n { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--soft); font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; transition: background .25s, color .25s; }
+.algo-step.on .n { background: #2A2F2C; color: #EEFF77; }
+.algo-step b { display: block; font-size: 19px; line-height: 1.35; }
+.algo-step small { display: block; margin-top: 2px; font-size: 14.5px; color: var(--fg-3); }
+.algo-detail { padding: 18px 22px 20px; border-radius: 22px; background: var(--bg); }
+.algo-detail p { margin-top: 10px; font-size: 15.5px; line-height: 1.7; color: var(--fg-2); }
+.algo-tag { display: inline-block; padding: 4px 10px; border-radius: 8px; background: var(--eco-bg); color: var(--eco); font-size: 12.5px; font-weight: 700; }
+/* 단계에 맞춰 지도에서 해당 요소만 강조한다 */
+.map .pin-hot, .map .route-line, .map .map-avoid, .map .avoid-tag, .map .direct, .map .pin-dest { transition: opacity .35s ease, left .45s cubic-bezier(.16, 1, .3, 1), top .45s cubic-bezier(.16, 1, .3, 1); }
+.map[data-step="1"] .route-line, .map[data-step="1"] .map-avoid, .map[data-step="1"] .avoid-tag, .map[data-step="1"] .direct { opacity: .25; }
+.map[data-step="1"] .pin-hot::after { content: ""; position: absolute; left: -6px; top: -6px; width: 46px; height: 44px; box-sizing: border-box; border-radius: 14px; border: 3px solid #17855A; animation: ping 1.6s ease-out infinite; }
+.map[data-step="2"] .pin-hot, .map[data-step="2"] .route-line { opacity: .3; }
+.map[data-step="2"] .direct { stroke: #E4573D; stroke-width: 3.5; }
+.map[data-step="2"] .map-avoid { animation: warn 1.4s ease-in-out infinite; }
+@keyframes warn { 50% { background: rgba(228, 87, 61, .32); } }
+.map[data-step="3"] .direct, .map[data-step="3"] .map-avoid, .map[data-step="3"] .avoid-tag { opacity: .25; }
+.map[data-step="3"] .pin-dest .eta { animation: bump .5s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* 핵심 기술 02: 쓰레기 인식 시뮬레이터 (어두운 밴드 위) */
+.vision-sec .sec-head .body { color: var(--band-2); }
+.vision-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 52px; align-items: center; }
+.vision-stage { display: grid; justify-items: center; gap: 18px; }
+.cam-phone { position: relative; display: flex; flex-direction: column; width: min(336px, 86vw); border: 10px solid #161A18; border-radius: 42px; background: #242926; color: #FFFFFF; overflow: hidden; box-shadow: 0 28px 64px rgba(0, 0, 0, .35); }
+.cam-status { display: flex; align-items: flex-end; justify-content: space-between; height: 34px; padding: 0 20px 4px; font-size: 12px; font-weight: 700; flex: none; }
+.cam-status-icons { display: flex; gap: 5px; font-size: 14px; }
+.cam-screen { position: relative; flex: 1; display: flex; flex-direction: column; padding: 8px 16px 18px; min-height: 0; }
+.cam-top { display: flex; align-items: center; justify-content: space-between; height: 32px; font-size: 18px; }
+.cam-live { font-size: 12px; font-weight: 800; color: #EEFF77; }
+.cam-guide { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; padding: 10px 12px; border-radius: 14px; background: #363C38; font-size: 12px; line-height: 1.45; color: rgba(255, 255, 255, .78); }
+.cam-guide i { flex: none; color: #EEFF77; font-size: 16px; margin-top: 1px; }
+.cam-guide b { color: #FFFFFF; }
+.viewfinder { position: relative; flex: 1; margin-top: 12px; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .07); background: radial-gradient(circle at 50% 45%, #343D37 0%, #1E2320 100%); }
+.vf { position: absolute; z-index: 3; width: 26px; height: 26px; border: 0 solid #EEFF77; pointer-events: none; }
+.vf.tl { top: 12px; left: 12px; border-top-width: 3.5px; border-left-width: 3.5px; border-top-left-radius: 6px; }
+.vf.tr { top: 12px; right: 12px; border-top-width: 3.5px; border-right-width: 3.5px; border-top-right-radius: 6px; }
+.vf.bl { bottom: 12px; left: 12px; border-bottom-width: 3.5px; border-left-width: 3.5px; border-bottom-left-radius: 6px; }
+.vf.br { bottom: 12px; right: 12px; border-bottom-width: 3.5px; border-right-width: 3.5px; border-bottom-right-radius: 6px; }
+.bbox { position: absolute; display: grid; place-items: center; padding: 6px; border: 2.5px solid var(--c); border-radius: 12px; background: rgba(255, 255, 255, .05); color: #FFFFFF; font: inherit; cursor: pointer; transition: transform .3s cubic-bezier(.16, 1, .3, 1), box-shadow .3s, opacity .3s; }
+.bbox img { width: auto; height: auto; max-width: 78%; max-height: 78%; object-fit: contain; }
+.bbox > i { font-size: 34px; opacity: .92; }
+.bbox:hover, .bbox.on { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(238, 255, 119, .28); }
+.viewfinder.focus .bbox:not(.on) { opacity: .4; }
+/* 실시간 인식 사진: 사진 비율대로 뷰파인더를 잡고, 사진에 그려진 상자 위에 투명한 누름 영역만 둔다 */
+.viewfinder.photo { flex: none; aspect-ratio: 640 / 857; background: #1E2320 url(img/live-photo.webp) center / 100% 100% no-repeat; }
+.viewfinder.photo .bbox { padding: 0; border-color: transparent; border-radius: 4px; background: none; }
+.viewfinder.photo .bbox:hover, .viewfinder.photo .bbox.on { transform: none; box-shadow: 0 0 0 3px #EEFF77, 0 0 18px rgba(238, 255, 119, .5); }
+.viewfinder.photo.focus .bbox:not(.on) { opacity: 1; background: rgba(20, 24, 22, .62); }
+.bbox-tag { position: absolute; top: -23px; left: -2px; padding: 2px 7px; border-radius: 6px 6px 6px 2px; background: var(--c); color: #FFFFFF; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.cam-bottom { margin-top: 12px; }
+.cam-head { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #8A8F8B; font-variant-numeric: tabular-nums; }
+.cam-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 10px; border-radius: 11px; background: var(--c); font-size: 12.5px; font-weight: 800; transition: transform .2s, opacity .2s; }
+/* 인식되지 않은 종류는 앱처럼 칩을 보여 주지 않는다 */
+.chip.zero { display: none; }
+.chip.bump { animation: bump .35s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes bump { 50% { transform: scale(1.15); } }
+.shutter { display: grid; place-items: center; width: 68px; height: 68px; margin: 12px auto 0; border: 0; border-radius: 50%; background: #EEFF77; color: #2A2F2C; font-size: 28px; box-shadow: 0 0 0 6px rgba(238, 255, 119, .18); cursor: pointer; transition: transform .2s, box-shadow .2s; }
+.shutter:hover { transform: scale(1.06); box-shadow: 0 0 0 9px rgba(238, 255, 119, .26); }
+.cam-sheet { position: absolute; z-index: 10; left: 0; right: 0; bottom: 0; padding: 12px 16px 16px; border-radius: 26px 26px 0 0; background: #FFFFFF; color: #2A2F2C; box-shadow: 0 -14px 36px rgba(0, 0, 0, .45); transform: translateY(105%); visibility: hidden; transition: transform .35s cubic-bezier(.16, 1, .3, 1), visibility 0s .35s; }
+.cam-screen > .tap { z-index: 12; }
+.shutter.pressed, .stepper button.pressed, .cs-actions button.pressed { transform: scale(.92); }
+.cam-sheet.open { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.16, 1, .3, 1); }
+.handle { width: 38px; height: 4px; margin: 0 auto 10px; border-radius: 2px; background: #E3E6E4; }
+.cs-title { font-size: 19px; font-weight: 800; }
+.cs-sub { margin: 2px 0 10px; font-size: 13px; color: #5A5F5B; }
+.cs-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding: 8px 10px; border-radius: 14px; background: #F4F6F5; }
+.cs-icon { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--c); color: #FFFFFF; font-size: 16px; }
+.cs-name { flex: 1; font-size: 14px; font-weight: 800; line-height: 1.3; }
+.cs-name small { display: block; font-size: 11px; font-weight: 600; color: #8A8F8B; }
+.stepper { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.stepper b { min-width: 16px; text-align: center; font-size: 15px; }
+.stepper button { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #E3E6E4; border-radius: 8px; background: #FFFFFF; color: #2A2F2C; font: 800 15px/1 var(--font); cursor: pointer; }
+.stepper button:hover { background: #EEFF77; border-color: #EEFF77; }
+.cs-actions { display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; margin-top: 10px; }
+.cs-actions button { height: 44px; border: 0; border-radius: 12px; font: 800 14px/1 var(--font); cursor: pointer; font-variant-numeric: tabular-nums; }
+#sheetRetry { background: #F4F6F5; color: #2A2F2C; font-weight: 700; }
+#sheetSave { background: #2A2F2C; color: #FFFFFF; }
+.vision-side { display: grid; gap: 22px; }
+.side-over { font-size: 14px; font-weight: 800; letter-spacing: .06em; color: #EEFF77; }
+.vision-side h3 { margin-top: -12px; color: var(--band-fg); font-size: clamp(22px, 2.4vw, 28px); }
+.waste-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.waste { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; border: 1.5px solid rgba(255, 255, 255, .07); border-radius: 20px; background: var(--band-card); color: var(--band-fg); font: inherit; cursor: pointer; transition: transform .22s ease, border-color .22s, background .22s, box-shadow .22s; }
+.waste:hover, .waste.on { transform: translateY(-5px); border-color: var(--c); background: rgba(255, 255, 255, .06); box-shadow: 0 12px 26px rgba(0, 0, 0, .28); }
+.w-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 15px; background: var(--c); color: #FFFFFF; font-size: 22px; }
+.waste b { font-size: 14.5px; word-break: keep-all; }
+.waste code { font-size: 11.5px; color: #A8ADA9; }
+.w-hex { padding: 2px 7px; border-radius: 6px; background: rgba(0, 0, 0, .25); color: #C8CFCB; font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.vision-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.vision-stats div { padding: 18px 18px 16px; border-radius: 20px; background: var(--band-card); }
+.vision-stats b { display: block; font-size: clamp(24px, 2.4vw, 30px); font-weight: 800; color: #EEFF77; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.vision-stats span { font-size: 13.5px; color: var(--band-2); }
+.hybrid { display: flex; align-items: center; gap: 16px; padding: 20px 22px; border-radius: 20px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .08); }
+.hy-icon { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: #17855A; color: #FFFFFF; font-size: 22px; }
+.hybrid b { display: block; font-size: 16px; color: var(--band-fg); }
+.hybrid span { font-size: 14px; line-height: 1.6; color: var(--band-2); }
+
+/* 포인트 샵 상품 */
+
+/* 그룹 · 뉴스 칩 */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.chips li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 12px; background: var(--soft); font-size: 14px; font-weight: 700; }
+.chips i { color: var(--eco); font-size: 16px; }
+
+/* 뱃지 */
+.badge { display: grid; justify-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--fg-2); font: 700 13px/1.3 var(--font); cursor: pointer; }
+.badge img { transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.badge:hover img, .badge:focus-visible img { animation: none; transform: translateY(-12px) scale(1.06); }
+.badge.on span { color: var(--fg); }
+.badge-cond { display: flex; align-items: center; gap: 10px; margin-top: 18px; padding: 12px 16px; border-radius: 14px; background: var(--soft); font-size: 15px; color: var(--fg-2); max-width: 500px; }
+.badge-cond b { padding: 2px 9px; border-radius: 8px; background: var(--lime); color: var(--lime-on); font-size: 14px; }
+
+/* 푸터 기술 스택 */
+.stack { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.stack li { padding: 5px 10px; border-radius: 9px; background: var(--soft); font-size: 12.5px; font-weight: 700; color: var(--fg-2); }
+
+/* 등장 효과: 평소에는 보이는 상태이고, 화면에 들어올 때만 아래에서 떠오른다 */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { transition: opacity var(--dur, 2.1s) cubic-bezier(.22, .61, .36, 1) var(--d, 0ms), translate var(--dur, 2.1s) cubic-bezier(.22, .61, .36, 1) var(--d, 0ms); }
+  .rise.pre { opacity: 0; translate: 0 var(--rise, 80px); transition: none; }
+  .feature.rise { --dur: 1.1s; --rise: 40px; }
+  .duo-card.rise { --dur: 2.4s; --rise: 140px; }
+  .rise mark { transition: background-size 1.2s cubic-bezier(.16, .85, .2, 1) calc(var(--d, 0ms) + 700ms); }
+  .rise.pre mark { background-size: 0% 100%; transition: none; }
+  .hero-copy > * { animation: riseIn .9s cubic-bezier(.16, .85, .2, 1) backwards; }
+  .hero-copy > :nth-child(2) { animation-delay: .08s; }
+  .hero-copy > :nth-child(3) { animation-delay: .16s; }
+  .hero-copy > :nth-child(4) { animation-delay: .24s; }
+  .hero-copy > :nth-child(5) { animation-delay: .32s; }
+  /* 수상 배지: 월계관이 차례로 톡 펼쳐진다 */
+  .award .laurel { animation: laurelIn .8s cubic-bezier(.3, 1.5, .5, 1) .9s backwards; }
+  .award + .award .laurel { animation-delay: 1.05s; }
+  .hero h1 mark { animation: sweep .8s cubic-bezier(.16, .85, .2, 1) .55s backwards; }
+  .hero-visual .phone { animation: phoneIn 1.1s cubic-bezier(.16, .85, .2, 1) .2s backwards; }
+  .hero-visual::before { animation: haloIn 1.2s cubic-bezier(.16, .85, .2, 1) backwards; }
+  .btn:active { transform: scale(.97); }
+}
+@keyframes riseIn { from { opacity: 0; transform: translateY(var(--rise, 44px)); } }
+@keyframes sweep { from { background-size: 0% 100%; } }
+@keyframes stamp { from { opacity: 0; transform: scale(1.8) rotate(-12deg); } }
+@keyframes phoneIn { from { opacity: 0; transform: translateY(80px) rotate(4deg); } }
+@keyframes haloIn { from { transform: translate(-50%, -50%) scale(.4); } }
+
+@media (max-width: 1100px) {
+  .honor-top { column-gap: 14px; }
+  .award { grid-template-columns: 34px max-content 34px; }
+  .award .laurel { width: 34px; }
+  .award b { font-size: 15px; }
+  .award em { font-size: 12.5px; }
+}
+@media (max-width: 900px) {
+  .award { min-width: 270px; grid-template-columns: 40px 1fr 40px; }
+  .award .laurel { width: 40px; }
+  .award b { font-size: 16px; }
+  .award em { font-size: 13.5px; }
+  .nav-links { display: none; }
+  .nav-links.open { display: grid; position: absolute; top: 100%; left: 0; right: 0; gap: 4px; padding: 10px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(25, 30, 36, .08); }
+  .nav-links.open a { padding: 10px 4px; font-size: 16px; }
+  .nav .btn { margin-left: auto; }
+  .menu-btn { display: grid; place-items: center; }
+  .route-grid, .vision-grid { grid-template-columns: minmax(0, 1fr); }
+  .map { height: 400px; }
+  .waste-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vision-stats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .stack { margin-left: 0; }
+  .hero-grid, .flow-grid, .impact-grid, .split, .split.reverse, .duo { grid-template-columns: minmax(0, 1fr); }
+  .hero { display: block; min-height: 0; padding-block: 36px 56px; }
+  .hero-grid { gap: 40px; }
+  .hero-visual { --hero-pw: min(280px, 70vw); }
+  .hero-visual > .phone { justify-self: center; margin-right: calc(var(--hero-pw) * .3); }
+  .hero-visual::before { left: calc(50% - var(--hero-pw) * .15); }
+  .hero-mascot { width: calc(var(--hero-pw) * .62); left: auto; right: -3%; bottom: -4%; }
+  .plans.pre li { transform: translateY(calc((-100% - 16px) * var(--k, 0) - 30px)); }
+  .problems, .plans, .principles, .char-grid { grid-template-columns: minmax(0, 1fr); }
+  .char-grid { gap: 40px; }
+  .palette { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .feature { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 26px 0; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .flow-stage { display: none; }
+  .flow-grid .steps { margin-top: 0; }
+  .step { min-height: 0; padding-block: 0 72px; justify-content: flex-start; }
+  .step:not(.is-active) h3, .step:not(.is-active) > p, .step-no { color: inherit; }
+  .step:not(.is-active) > p { color: var(--fg-2); }
+  .step-no { color: var(--fg-3); }
+  .step-phone { display: block; --pw: min(280px, 76vw); margin: 18px auto 0; }
+  .split, .split.reverse { gap: 48px; }
+  .split .split-media, .split.reverse .split-media { order: 2; }
+  .split-media .phone { --pw: min(280px, 76vw); }
+  .duo-card .phone { --pw: min(250px, 66vw); }
+  .badges { gap: 14px 16px; max-width: 100%; }
+  .badge-strip .badges { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .photo-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto; aspect-ratio: auto; }
+  .photo-slot { aspect-ratio: 16 / 10; }
+  .photo-slot.wide { order: -1; grid-row: auto; grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+  .act-tab { padding: 18px; gap: 14px; }
+}
+@media (max-width: 560px) {
+}
+@media (max-width: 480px) {
+  .sheet-meta { gap: 4px; font-size: 12px; }
+  .meta-factory { display: none; }
+  .sheet-title { font-size: 17px; }
+  .home-card { --u: 1; }
+  .hc-formula li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .btn { flex: 1 1 auto; }
+}
+</style>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><img src="img/app-icon.webp" alt="" width="32" height="32">PLOGGO</a>
+    <nav class="nav-links" id="navLinks" aria-label="페이지 목차">
+      <a href="#concept" data-label="컨셉">컨셉</a>
+      <a href="#features" data-label="기능">기능</a>
+      <a href="#route" data-label="핵심 기술">핵심 기술</a>
+      <a href="#design" data-label="디자인">디자인</a>
+      <a href="#character" data-label="캐릭터">캐릭터</a>
+    </nav>
+    <a class="btn" href="#download">앱 받기</a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navLinks"><i class="ti ti-menu-2"></i></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">AI 플로깅 앱 PLOGGO</p>
+        <h1>동네 한 바퀴,<br>가볍게 <mark>줍죠</mark></h1>
+        <p class="lead">쓰레기가 많은 길을 찾아 플로깅 코스를 생성합니다. 주운 쓰레기는 AI가 종류와 개수를 인식하고, 수거한 만큼 포인트로 적립됩니다.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/yeonyeong0120/Repo_JDH" target="_blank" rel="noopener"><i class="ti ti-brand-github"></i>GitHub</a>
+          <a class="btn ghost" href="#download">앱 다운로드</a>
+        </div>
+        <div class="honors" aria-label="수상 및 성과">
+          <div class="honor-top">
+            <div class="award"><svg class="laurel" viewBox="0 0 80 110" aria-hidden="true"><g fill="currentColor"><path d="M 47.1 95.6 L 33.9 89.4 L 23.6 79.1 L 17.4 65.9 L 16.2 51.3 L 19.9 37.3 L 28.3 25.3 L 40.3 16.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="39.3" cy="98.9" rx="8.5" ry="3.6" transform="rotate(-203.0 39.3 98.9)"/><ellipse cx="42.5" cy="89.5" rx="7.7" ry="3.2" transform="rotate(-127.0 42.5 89.5)"/><ellipse cx="25.4" cy="89.8" rx="8.5" ry="3.6" transform="rotate(-183.0 25.4 89.8)"/><ellipse cx="31.7" cy="82.1" rx="7.7" ry="3.2" transform="rotate(-107.0 31.7 82.1)"/><ellipse cx="15.5" cy="76.6" rx="8.5" ry="3.6" transform="rotate(-163.0 15.5 76.6)"/><ellipse cx="24.0" cy="71.5" rx="7.7" ry="3.2" transform="rotate(-87.0 24.0 71.5)"/><ellipse cx="10.6" cy="60.8" rx="8.5" ry="3.6" transform="rotate(-143.0 10.6 60.8)"/><ellipse cx="20.4" cy="58.8" rx="7.7" ry="3.2" transform="rotate(-67.0 20.4 58.8)"/><ellipse cx="11.5" cy="44.2" rx="8.5" ry="3.6" transform="rotate(-123.0 11.5 44.2)"/><ellipse cx="21.4" cy="45.7" rx="7.7" ry="3.2" transform="rotate(-47.0 21.4 45.7)"/><ellipse cx="18.0" cy="29.0" rx="8.5" ry="3.6" transform="rotate(-103.0 18.0 29.0)"/><ellipse cx="26.8" cy="33.8" rx="7.7" ry="3.2" transform="rotate(-27.0 26.8 33.8)"/><ellipse cx="29.3" cy="16.9" rx="8.5" ry="3.6" transform="rotate(-83.0 29.3 16.9)"/><ellipse cx="35.9" cy="24.4" rx="7.7" ry="3.2" transform="rotate(-7.0 35.9 24.4)"/><ellipse cx="44.1" cy="9.4" rx="8.5" ry="3.6" transform="rotate(-63.0 44.1 9.4)"/><ellipse cx="47.7" cy="18.7" rx="7.7" ry="3.2" transform="rotate(13.0 47.7 18.7)"/><ellipse cx="62.3" cy="12.5" rx="8" ry="3.4" transform="rotate(-5.0 62.3 12.5)"/></g></svg><div><span>과학기술정보통신부</span><b>한이음 드림업</b><em><mark>중간평가 우수 프로젝트</mark><br>개발 지원금 130만 원 수혜</em></div><svg class="laurel" viewBox="0 0 80 110" aria-hidden="true"><g fill="currentColor" transform="scale(-1 1) translate(-80 0)"><path d="M 47.1 95.6 L 33.9 89.4 L 23.6 79.1 L 17.4 65.9 L 16.2 51.3 L 19.9 37.3 L 28.3 25.3 L 40.3 16.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="39.3" cy="98.9" rx="8.5" ry="3.6" transform="rotate(-203.0 39.3 98.9)"/><ellipse cx="42.5" cy="89.5" rx="7.7" ry="3.2" transform="rotate(-127.0 42.5 89.5)"/><ellipse cx="25.4" cy="89.8" rx="8.5" ry="3.6" transform="rotate(-183.0 25.4 89.8)"/><ellipse cx="31.7" cy="82.1" rx="7.7" ry="3.2" transform="rotate(-107.0 31.7 82.1)"/><ellipse cx="15.5" cy="76.6" rx="8.5" ry="3.6" transform="rotate(-163.0 15.5 76.6)"/><ellipse cx="24.0" cy="71.5" rx="7.7" ry="3.2" transform="rotate(-87.0 24.0 71.5)"/><ellipse cx="10.6" cy="60.8" rx="8.5" ry="3.6" transform="rotate(-143.0 10.6 60.8)"/><ellipse cx="20.4" cy="58.8" rx="7.7" ry="3.2" transform="rotate(-67.0 20.4 58.8)"/><ellipse cx="11.5" cy="44.2" rx="8.5" ry="3.6" transform="rotate(-123.0 11.5 44.2)"/><ellipse cx="21.4" cy="45.7" rx="7.7" ry="3.2" transform="rotate(-47.0 21.4 45.7)"/><ellipse cx="18.0" cy="29.0" rx="8.5" ry="3.6" transform="rotate(-103.0 18.0 29.0)"/><ellipse cx="26.8" cy="33.8" rx="7.7" ry="3.2" transform="rotate(-27.0 26.8 33.8)"/><ellipse cx="29.3" cy="16.9" rx="8.5" ry="3.6" transform="rotate(-83.0 29.3 16.9)"/><ellipse cx="35.9" cy="24.4" rx="7.7" ry="3.2" transform="rotate(-7.0 35.9 24.4)"/><ellipse cx="44.1" cy="9.4" rx="8.5" ry="3.6" transform="rotate(-63.0 44.1 9.4)"/><ellipse cx="47.7" cy="18.7" rx="7.7" ry="3.2" transform="rotate(13.0 47.7 18.7)"/><ellipse cx="62.3" cy="12.5" rx="8" ry="3.4" transform="rotate(-5.0 62.3 12.5)"/></g></svg></div>
+            <div class="award"><svg class="laurel" viewBox="0 0 80 110" aria-hidden="true"><g fill="currentColor"><path d="M 47.1 95.6 L 33.9 89.4 L 23.6 79.1 L 17.4 65.9 L 16.2 51.3 L 19.9 37.3 L 28.3 25.3 L 40.3 16.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="39.3" cy="98.9" rx="8.5" ry="3.6" transform="rotate(-203.0 39.3 98.9)"/><ellipse cx="42.5" cy="89.5" rx="7.7" ry="3.2" transform="rotate(-127.0 42.5 89.5)"/><ellipse cx="25.4" cy="89.8" rx="8.5" ry="3.6" transform="rotate(-183.0 25.4 89.8)"/><ellipse cx="31.7" cy="82.1" rx="7.7" ry="3.2" transform="rotate(-107.0 31.7 82.1)"/><ellipse cx="15.5" cy="76.6" rx="8.5" ry="3.6" transform="rotate(-163.0 15.5 76.6)"/><ellipse cx="24.0" cy="71.5" rx="7.7" ry="3.2" transform="rotate(-87.0 24.0 71.5)"/><ellipse cx="10.6" cy="60.8" rx="8.5" ry="3.6" transform="rotate(-143.0 10.6 60.8)"/><ellipse cx="20.4" cy="58.8" rx="7.7" ry="3.2" transform="rotate(-67.0 20.4 58.8)"/><ellipse cx="11.5" cy="44.2" rx="8.5" ry="3.6" transform="rotate(-123.0 11.5 44.2)"/><ellipse cx="21.4" cy="45.7" rx="7.7" ry="3.2" transform="rotate(-47.0 21.4 45.7)"/><ellipse cx="18.0" cy="29.0" rx="8.5" ry="3.6" transform="rotate(-103.0 18.0 29.0)"/><ellipse cx="26.8" cy="33.8" rx="7.7" ry="3.2" transform="rotate(-27.0 26.8 33.8)"/><ellipse cx="29.3" cy="16.9" rx="8.5" ry="3.6" transform="rotate(-83.0 29.3 16.9)"/><ellipse cx="35.9" cy="24.4" rx="7.7" ry="3.2" transform="rotate(-7.0 35.9 24.4)"/><ellipse cx="44.1" cy="9.4" rx="8.5" ry="3.6" transform="rotate(-63.0 44.1 9.4)"/><ellipse cx="47.7" cy="18.7" rx="7.7" ry="3.2" transform="rotate(13.0 47.7 18.7)"/><ellipse cx="62.3" cy="12.5" rx="8" ry="3.4" transform="rotate(-5.0 62.3 12.5)"/></g></svg><div><span>인천광역시</span><b>공공데이터 활용 경진대회</b><em><mark>우수상</mark></em></div><svg class="laurel" viewBox="0 0 80 110" aria-hidden="true"><g fill="currentColor" transform="scale(-1 1) translate(-80 0)"><path d="M 47.1 95.6 L 33.9 89.4 L 23.6 79.1 L 17.4 65.9 L 16.2 51.3 L 19.9 37.3 L 28.3 25.3 L 40.3 16.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="39.3" cy="98.9" rx="8.5" ry="3.6" transform="rotate(-203.0 39.3 98.9)"/><ellipse cx="42.5" cy="89.5" rx="7.7" ry="3.2" transform="rotate(-127.0 42.5 89.5)"/><ellipse cx="25.4" cy="89.8" rx="8.5" ry="3.6" transform="rotate(-183.0 25.4 89.8)"/><ellipse cx="31.7" cy="82.1" rx="7.7" ry="3.2" transform="rotate(-107.0 31.7 82.1)"/><ellipse cx="15.5" cy="76.6" rx="8.5" ry="3.6" transform="rotate(-163.0 15.5 76.6)"/><ellipse cx="24.0" cy="71.5" rx="7.7" ry="3.2" transform="rotate(-87.0 24.0 71.5)"/><ellipse cx="10.6" cy="60.8" rx="8.5" ry="3.6" transform="rotate(-143.0 10.6 60.8)"/><ellipse cx="20.4" cy="58.8" rx="7.7" ry="3.2" transform="rotate(-67.0 20.4 58.8)"/><ellipse cx="11.5" cy="44.2" rx="8.5" ry="3.6" transform="rotate(-123.0 11.5 44.2)"/><ellipse cx="21.4" cy="45.7" rx="7.7" ry="3.2" transform="rotate(-47.0 21.4 45.7)"/><ellipse cx="18.0" cy="29.0" rx="8.5" ry="3.6" transform="rotate(-103.0 18.0 29.0)"/><ellipse cx="26.8" cy="33.8" rx="7.7" ry="3.2" transform="rotate(-27.0 26.8 33.8)"/><ellipse cx="29.3" cy="16.9" rx="8.5" ry="3.6" transform="rotate(-83.0 29.3 16.9)"/><ellipse cx="35.9" cy="24.4" rx="7.7" ry="3.2" transform="rotate(-7.0 35.9 24.4)"/><ellipse cx="44.1" cy="9.4" rx="8.5" ry="3.6" transform="rotate(-63.0 44.1 9.4)"/><ellipse cx="47.7" cy="18.7" rx="7.7" ry="3.2" transform="rotate(13.0 47.7 18.7)"/><ellipse cx="62.3" cy="12.5" rx="8" ry="3.4" transform="rotate(-5.0 62.3 12.5)"/></g></svg></div>
+          </div>
+          <ul class="honor-list">
+            <li><i class="ti ti-presentation"></i>2026년 정보처리 추계학술대회</li>
+            <li><i class="ti ti-certificate"></i>지식재산권 등록 진행 중</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="phone"><img src="img/home.webp" alt="플로고 홈 화면. 나의 환경 영향력과 지금 바로 시작 버튼이 보인다." width="585" height="1266"></div>
+        <img class="hero-mascot" src="img/mascot-jump.webp" alt="" width="415" height="520">
+      </div>
+    </div>
+  </section>
+
+  <section class="section photos" aria-label="활동 사진">
+    <div class="wrap photo-grid">
+      <figure class="photo-slot wide filled"><img src="img/photo-award-group.webp" alt="제11회 인천광역시 공공데이터 활용 경진대회 시상식 단체 사진" width="1400" height="788" loading="lazy"></figure>
+      <figure class="photo-slot filled"><img src="img/photo-team.webp" alt="제11회 인천광역시 공공데이터 활용 경진대회에서 우수상을 받은 방이김 팀 기념 사진" width="800" height="465" loading="lazy"></figure>
+      <figure class="photo-slot filled"><img src="img/photo-ack.webp" alt="ACK 2026(한국정보처리학회 추계학술발표대회) 참가 기념 사진" width="800" height="450" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section class="section thesis" id="concept">
+    <div class="wrap">
+      <div class="thesis-lines">
+        <p class="on">플로깅은 주로 깨끗한 공원에서 이루어졌습니다.</p>
+        <p>정작 쓰레기가 쌓이는 골목은 아무도 걷지 않았습니다.</p>
+        <p>그래서 플로고는 <mark>무단투기가 잦은 길</mark>로 코스를 생성합니다.</p>
+      </div>
+      <dl class="facts">
+        <div><dt class="count">1,535곳</dt><dd>코스 추천에 쓰는 무단투기 단속 CCTV 위치</dd></div>
+        <div><dt class="count">2곳</dt><dd>코스 하나에 포함되는 무단투기 빈발 구역</dd></div>
+        <div><dt class="count">5종</dt><dd>AI가 카메라로 분류하는 쓰레기 종류</dd></div>
+      </dl>
+
+      <h3 class="sub-head">플로고가 해결하는 네 가지 문제</h3>
+      <div class="problems">
+        <article class="problem" style="--k: 0">
+          <span class="tag">오염 구역 중심의 코스 설계</span>
+          <h4>쓰레기가 쌓이는 골목으로 안내</h4>
+          <p>플로깅은 대개 걷기 좋은 공원이나 산책로에서 이루어져, 정작 쓰레기가 쌓이는 골목은 정화 대상에서 밀려났습니다. 무단투기 단속 CCTV 공공데이터로 정화가 시급한 구역을 찾고, 그 구역을 지나도록 코스를 생성합니다.</p>
+        </article>
+        <article class="problem" style="--k: 1">
+          <span class="tag">수거 인증 절차의 자동화</span>
+          <h4>글 대신 사진 한 장으로 인증</h4>
+          <p>주운 쓰레기를 하나하나 세어 기록하고 인증 글까지 작성하는 과정이 번거로워, 활동 후 기록을 남기지 않는 경우가 많았습니다. 플로고에서는 카메라로 비추면 AI가 종류와 개수를 인식하고, 결과는 그룹에 자동으로 공유됩니다.</p>
+        </article>
+        <article class="problem" style="--k: 2">
+          <span class="tag">시민 참여형 관리 체계 구축</span>
+          <h4>시민의 걸음으로 채우는 관리 공백</h4>
+          <p>지자체 인력과 예산만으로는 모든 골목을 매일 관리하기 어려워 관리 공백이 생깁니다. 시민의 산책 경로를 관리 공백 지역으로 연결해, 걷는 것만으로 지역 환경 관리에 참여할 수 있도록 했습니다.</p>
+        </article>
+        <article class="problem" style="--k: 3">
+          <span class="tag">동기의 순환 구조 구축</span>
+          <h4>수거부터 보상까지 하나의 흐름으로</h4>
+          <p>플로깅이 단발성 활동에 그치는 이유는 꾸준히 참여할 동기가 부족하기 때문입니다. 수거 인증, 포인트 적립, 쿠폰 교환, 뱃지 획득을 하나의 흐름으로 연결해 참여가 계속 이어지도록 했습니다.</p>
+        </article>
+      </div>
+
+      <h3 class="sub-head">향후 확장 계획</h3>
+      <ul class="plans">
+        <li style="--k: 0"><span class="plan-icon"><i class="ti ti-map-2"></i></span><b>구간별 오염도 지도</b><span>누적된 이동·수거 기록으로 지자체 환경 정책에 활용할 수 있는 오염도 지도를 제작합니다.</span></li>
+        <li style="--k: 1"><span class="plan-icon"><i class="ti ti-wallet"></i></span><b>지역 화폐 연계</b><span>인천 이음카드 등 지역 화폐와 에코 포인트의 연계 방안을 검토합니다.</span></li>
+        <li style="--k: 2"><span class="plan-icon"><i class="ti ti-heart-handshake"></i></span><b>봉사 · ESG 활동</b><span>청소년 봉사활동과 기업 ESG 활동에 활용하고, 1365 자원봉사포털 연계 가능성을 검토합니다.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>걷기부터 보상까지<br>다섯 가지 기능</h2>
+      </header>
+      <div class="features">
+        <a class="feature" href="#route"><h3>스마트 경로 추천</h3><p>도착지를 고르면 근처 무단투기 빈발 구역 2곳을 경유하는 코스를 추천합니다.</p><span class="go">자세히 →</span></a>
+        <a class="feature" href="#how"><h3>플로깅 트래킹</h3><p>화면이 꺼져도 거리, 시간, 걸음 수, 칼로리를 계속 기록합니다.</p><span class="go">자세히 →</span></a>
+        <a class="feature" href="#vision"><h3>AI 수거 인증</h3><p>주운 쓰레기를 카메라로 비추면 5종으로 분류하고 개수를 자동으로 집계합니다.</p><span class="go">자세히 →</span></a>
+        <a class="feature" href="#impact"><h3>환경 영향과 리워드</h3><p>감축한 탄소량을 소나무 그루 수로 환산하고, 적립한 에코 포인트는 쿠폰으로 교환합니다.</p><span class="go">자세히 →</span></a>
+        <a class="feature" href="#together"><h3>그룹과 환경 뉴스</h3><p>동네 그룹에 활동을 공유하고, AI가 요약한 환경 뉴스를 제공합니다.</p><span class="go">자세히 →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band" id="impact">
+    <div class="wrap impact-grid">
+      <div class="impact-copy">
+        <h2>수거한 쓰레기를<br><mark>소나무</mark>로 환산한<br>환경 영향력</h2>
+        <p class="body">앱 홈 화면의 환경 영향력 카드입니다. 누적 온실가스 감축량과 연간 목표 10kgCO₂eq 대비 달성률, 같은 양을 흡수하는 소나무 수를 보여 줍니다.</p>
+      </div>
+      <div class="impact-side">
+        <div class="home-card" id="homeCard" role="img" aria-label="나의 환경 영향력 카드 예시. 연간 목표 66%, 온실가스 감축 6.6kgCO₂eq, 나무 1.0그루 효과.">
+          <span class="hc-blob" aria-hidden="true"></span>
+          <p class="hc-title">나의 환경 영향력</p>
+          <div class="hc-row">
+            <div class="hc-gauge" aria-hidden="true">
+              <svg viewBox="0 0 126 78"><path class="hc-track" d="M 8 60 A 55 55 0 0 1 118 60" pathLength="100"></path><path class="hc-fill" id="hcFill" d="M 8 60 A 55 55 0 0 1 118 60" pathLength="100" style="stroke-dasharray: 66 100"></path></svg>
+              <span class="hc-gauge-label"><b><span id="hcPct">66</span><small>%</small></b><span>연간 목표</span></span>
+            </div>
+            <div class="hc-stats" aria-hidden="true">
+              <span class="hc-label">온실가스 감축</span>
+              <span class="hc-value"><b id="hcCo2">6.6</b> kgCO₂eq</span>
+              <span class="hc-tree"><i class="ti ti-tree"></i><span>나무 <span id="hcTree">1.0</span>그루 효과</span></span>
+            </div>
+          </div>
+        </div>
+        <p class="hc-caption">예시: 쓰레기 6kg 수거 후 홈 화면 카드</p>
+        <ul class="hc-formula">
+          <li><b>온실가스 감축</b><span>수거량 × 1.1</span></li>
+          <li><b>나무 효과</b><span>감축량 ÷ 6.6 (30년생 소나무 1그루의 1년 흡수량)</span></li>
+          <li><b>연간 목표</b><span>10kgCO₂eq 대비 비율</span></li>
+        </ul>
+        <p class="source">계수 출처는 한국환경공단(폐플라스틱 재활용 시 온실가스 감축량)과 국립산림과학원(30년생 소나무 표준 탄소흡수량)입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section flow" id="how">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>플로깅 활동의<br>진행 과정</h2>
+      </header>
+      <div class="flow-grid">
+        <div class="flow-stage">
+          <div class="phone">
+            <img class="on" data-i="0" src="img/dest.webp" alt="목적지 설정 화면. 출발지에서 도착지까지 재활용 표시가 있는 구역을 들르는 점선 코스가 그려져 있다." width="585" height="1266">
+            <img data-i="1" src="img/tracking.webp" alt="플로깅 중 화면. 경과 시간 14분 32초, 거리 1.6km, 걸음 2,140, 수거 15개." width="585" height="1266">
+            <img data-i="2" src="img/camera.webp" alt="쓰레기 촬영 화면. 길바닥에 모아 둔 페트병 3개, 캔 2개, 종이 1개에 종류별 인식 상자가 그려지고 3종 6개로 집계된다." width="585" height="1266">
+            <div class="finish-shot" data-i="3"><div class="fs-screen"><img class="fs-base" src="img/finish-base.webp" alt="활동 완료 화면. 오늘 수거 15개, 430P 적립." width="585" height="1266"><img class="fs-stamp" src="img/finish-stamp.webp" alt="" width="300" height="301" style="left: 24.36%; top: 23.29%; width: 51.28%"><img class="fs-card" src="img/finish-card1.webp" alt="" width="525" height="96" style="left: 5.13%; top: 68.84%; width: 89.74%"><img class="fs-card" src="img/finish-card2.webp" alt="" width="525" height="96" style="left: 5.13%; top: 77.49%; width: 89.74%"></div><div class="fs-confetti" aria-hidden="true"></div></div>
+          </div>
+        </div>
+        <ol class="steps">
+          <li class="step is-active" data-i="0">
+            <span class="step-no">01 목적지 설정</span>
+            <h3>도착지 선택만으로<br>완성되는 코스</h3>
+            <p>지도에서 도착지를 선택하면 경로 주변의 무단투기 빈발 구역 2곳을 코스에 포함합니다. 오염도가 높은 구역을 우선하고, 우회 거리는 최소화합니다.</p>
+            <ul class="step-points">
+              <li><i class="ti ti-map-pin"></i>선택한 지점의 도로명 주소 즉시 표시</li>
+              <li><i class="ti ti-refresh"></i>코스 변경 시 다른 코스 재추천</li>
+              <li><i class="ti ti-device-floppy"></i>앱이 예기치 않게 종료되어도 기록 유지</li>
+            </ul>
+            <p class="note">인천 9개 군·구 무단투기 단속 CCTV 공공데이터 기반</p>
+            <div class="phone step-phone"><img src="img/dest.webp" alt="목적지 설정 화면" width="585" height="1266"></div>
+          </li>
+          <li class="step" data-i="1">
+            <span class="step-no">02 플로깅</span>
+            <h3>화면이 꺼져도<br>끊기지 않는 기록</h3>
+            <p>휴대폰을 주머니에 넣고 걸어도 거리, 시간, 걸음 수, 칼로리가 계속 기록됩니다. 걸음 수와 칼로리는 이동 거리와 시간으로 산출합니다.</p>
+            <ul class="step-points">
+              <li><i class="ti ti-compass"></i>나침반으로 현재 바라보는 방향 표시</li>
+              <li><i class="ti ti-moon"></i>야외 시인성을 높인 어두운 화면</li>
+              <li><i class="ti ti-hand-finger"></i>1.2초간 길게 눌러야 하는 종료 버튼으로 실수 방지</li>
+            </ul>
+            <div class="phone step-phone"><img src="img/tracking.webp" alt="플로깅 중 화면" width="585" height="1266"></div>
+          </li>
+          <li class="step" data-i="2">
+            <span class="step-no">03 수거 인증</span>
+            <h3>카메라 인식으로<br>자동 집계되는 수거량</h3>
+            <p>주운 쓰레기를 바닥에 놓고 비추면 종류별 개수를 바로 알려 줍니다. 촬영할 때마다 개수가 이번 활동 기록에 합산됩니다.</p>
+            <ul class="kinds" aria-label="AI가 구분하는 쓰레기 종류">
+              <li style="--c: var(--plastic)">플라스틱</li>
+              <li style="--c: var(--can)">캔</li>
+              <li style="--c: var(--paper)">종이</li>
+              <li style="--c: var(--glass)">유리</li>
+              <li style="--c: var(--general)">일반쓰레기</li>
+            </ul>
+            <ul class="step-points">
+              <li><i class="ti ti-scan"></i>0.7초 간격 실시간 인식</li>
+              <li><i class="ti ti-adjustments-horizontal"></i>확인 시트에서 개수 직접 수정</li>
+              <li><i class="ti ti-users"></i>인증샷 그룹 피드 자동 공유</li>
+            </ul>
+            <div class="phone step-phone"><img src="img/camera.webp" alt="쓰레기 촬영 화면" width="585" height="1266"></div>
+          </li>
+          <li class="step" data-i="3">
+            <span class="step-no">04 정산</span>
+            <h3>수거량에 따른<br>포인트 적립</h3>
+            <p>플로깅을 마치면 기본 포인트에 수거 개수만큼 포인트를 더해 적립합니다. 목적지까지 완주하면 보너스 포인트가 추가됩니다.</p>
+            <dl class="points">
+              <div><dt>플로깅 1회</dt><dd>100P</dd></div>
+              <div><dt>쓰레기 15개 × 20P</dt><dd>300P</dd></div>
+              <div><dt>목적지까지 완주</dt><dd>30P</dd></div>
+              <div class="sum"><dt>15개 수거 후 완주 시</dt><dd>430P</dd></div>
+            </dl>
+            <div class="phone step-phone"><div class="finish-shot"><div class="fs-screen"><img class="fs-base" src="img/finish-base.webp" alt="활동 완료 화면" width="585" height="1266"><img class="fs-stamp" src="img/finish-stamp.webp" alt="" width="300" height="301" style="left: 24.36%; top: 23.29%; width: 51.28%"><img class="fs-card" src="img/finish-card1.webp" alt="" width="525" height="96" style="left: 5.13%; top: 68.84%; width: 89.74%"><img class="fs-card" src="img/finish-card2.webp" alt="" width="525" height="96" style="left: 5.13%; top: 77.49%; width: 89.74%"></div><div class="fs-confetti" aria-hidden="true"></div></div></div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section route-sec" id="route">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>도착지만 선택하면 생성되는<br><mark>플로깅 맞춤 코스</mark></h2>
+        <p class="body">최단 경로가 아닌 정화 중심의 경로입니다. 출발지와 도착지 사이의 무단투기 빈발 구역 2곳을 경유하고, 공장지대 같은 회피 구역은 우회하는 보행 코스를 생성합니다.</p>
+      </header>
+      <div class="route-grid">
+        <div class="sim-card">
+          <div class="preset-tabs" aria-label="도착지 예시">
+            <span class="preset on" data-route="bupyeong"><i class="ti ti-flag-filled"></i>부평공원 분수광장</span>
+            <span class="preset" data-route="gulpo"><i class="ti ti-flag-filled"></i>굴포천 산책로</span>
+            <span class="preset" data-route="songdo"><i class="ti ti-flag-filled"></i>송도 센트럴파크</span>
+          </div>
+          <div class="map" id="routeMap" data-step="1">
+            <div class="map-park" style="width: 36%; height: 32%; bottom: 20%; left: 4%"></div>
+            <div class="map-park" style="width: 42%; height: 34%; top: 7%; right: 3%"></div>
+            <div class="map-avoid"></div>
+            <span class="avoid-tag"><i class="ti ti-building-factory-2"></i>회피 구역 우회</span>
+            <div class="map-search"><i class="ti ti-search"></i><span id="mapSearch">인천 부평구 부평공원 분수광장</span></div>
+            <svg class="map-svg" viewBox="0 0 500 440" preserveAspectRatio="none" aria-hidden="true">
+              <path class="direct" d="M 85 300 L 400 176"></path>
+              <path class="route-line" id="routeLine" d="M 85 300 Q 140 305 180 264 T 320 242 L 400 176"></path>
+            </svg>
+            <span class="pin-origin" id="pinOrigin" style="left: 17%; top: 68%" title="출발지"><span class="heading"></span><span class="dot"></span></span>
+            <span class="pin-hot" id="hot1" style="left: 36%; top: 60%"><svg viewBox="0 0 34 42" aria-hidden="true"><path d="M8 0 H26 A8 8 0 0 1 34 8 V24 A8 8 0 0 1 26 32 H21.5 L17 41 L12.5 32 H8 A8 8 0 0 1 0 24 V8 A8 8 0 0 1 8 0 Z"></path></svg><i class="ti ti-recycle"></i><b>1</b></span>
+            <span class="pin-hot" id="hot2" style="left: 64%; top: 55%"><svg viewBox="0 0 34 42" aria-hidden="true"><path d="M8 0 H26 A8 8 0 0 1 34 8 V24 A8 8 0 0 1 26 32 H21.5 L17 41 L12.5 32 H8 A8 8 0 0 1 0 24 V8 A8 8 0 0 1 8 0 Z"></path></svg><i class="ti ti-recycle"></i><b>2</b></span>
+            <span class="pin-dest" id="pinDest" style="left: 80%; top: 40%"><span class="eta" id="mapEta">2.4km · 38분</span><span class="flag"><svg viewBox="0 0 34 42" aria-hidden="true"><path d="M8 0 H26 A8 8 0 0 1 34 8 V24 A8 8 0 0 1 26 32 H21.5 L17 41 L12.5 32 H8 A8 8 0 0 1 0 24 V8 A8 8 0 0 1 8 0 Z"></path></svg><i class="ti ti-flag-filled"></i></span></span>
+            <div class="map-sheet">
+              <div class="sheet-row">
+                <span class="sheet-meta"><i class="ti ti-recycle"></i>정화지역 2곳<span class="meta-factory"><span class="dot"></span><i class="ti ti-building-factory-2 muted"></i>공장지대 0곳</span></span>
+                <span class="course-btn" id="courseBtn"><i class="ti ti-refresh"></i>코스 변경</span>
+              </div>
+              <div class="sheet-row">
+                <div class="sheet-title" id="sheetDest">부평공원 분수광장</div>
+                <span class="sheet-go"><i class="ti ti-run"></i>출발</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="algo-panel">
+          <ol class="algo-steps" aria-label="경로 추천 단계">
+            <li><div class="algo-step on" data-step="1"><span class="n">01</span><span class="t"><b>핫스팟 2곳 선정</b><small>타원 안 후보 중 종합 점수 상위 2곳</small></span></div></li>
+            <li><div class="algo-step" data-step="2"><span class="n">02</span><span class="t"><b>회피 구역 우회</b><small>경로가 회피 구역을 지나면 후보 교체</small></span></div></li>
+            <li><div class="algo-step" data-step="3"><span class="n">03</span><span class="t"><b>보행자 경로 연결</b><small>보행자 경로 연결, 거리·시간 표시</small></span></div></li>
+          </ol>
+          <div class="algo-detail" aria-live="polite">
+            <span class="algo-tag" id="algoTag">타원 범위 + BallTree</span>
+            <p id="algoText">출발지와 도착지를 두 초점으로 하는 타원(기본 1.5km) 안의 핫스팟을 후보로 추립니다. 단속 CCTV 대수와 반경 200m 내 인접 CCTV 수로 매긴 오염도 점수에서 우회 거리를 뺀 종합 점수가 가장 높은 2곳을 선정합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band vision-sec" id="vision">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>카메라로 비추면<br><mark>5종 자동 분류</mark></h2>
+        <p class="body">수거한 쓰레기를 직접 입력할 필요가 없습니다. AI 허브의 생활폐기물 이미지 데이터셋으로 파인튜닝한 YOLOv8n 모델이 0.7초마다 화면을 분석해 종류와 개수를 인식합니다. 촬영 후에는 확인 시트에서 개수를 수정할 수 있습니다.</p>
+      </header>
+      <div class="vision-grid">
+        <div class="vision-stage">
+          <div class="cam-phone">
+            <div class="cam-status"><span>9:48</span><span class="cam-status-icons"><i class="ti ti-antenna-bars-5"></i><i class="ti ti-wifi"></i><i class="ti ti-battery-4"></i></span></div>
+            <div class="cam-screen">
+              <div class="cam-top"><i class="ti ti-x"></i><span class="cam-live">● 실시간 인식 중</span><i class="ti ti-bolt"></i></div>
+              <div class="cam-guide"><i class="ti ti-bulb-filled"></i><span><b>한 번에 하나씩</b> 비춰 주세요. 바닥에 내려놓고 찍으면 더 잘 인식돼요.</span></div>
+              <div class="viewfinder photo" id="viewfinder" role="img" aria-label="길가에 모아 둔 페트병 2개, 캔, 종이, 유리병을 비춘 실시간 인식 화면. 물건마다 종류와 확률이 적힌 상자가 그려져 있다.">
+                <button type="button" class="bbox" data-cat="plastic" aria-label="플라스틱 96%" style="--c: var(--plastic); left: 25.2%; top: 25%; width: 24.5%; height: 22.2%"></button>
+                <button type="button" class="bbox" data-cat="can" aria-label="캔 93%" style="--c: var(--can); left: 66.4%; top: 27.3%; width: 24.5%; height: 19.3%"></button>
+                <button type="button" class="bbox" data-cat="glass" aria-label="유리 89%" style="--c: var(--glass); left: 46.9%; top: 53.8%; width: 21.4%; height: 26.6%"></button>
+                <button type="button" class="bbox" data-cat="paper" aria-label="종이 91%" style="--c: var(--paper); left: 7.3%; top: 58.4%; width: 28.1%; height: 20.2%"></button>
+                <button type="button" class="bbox" data-cat="plastic" aria-label="플라스틱 94%" style="--c: var(--plastic); left: 72%; top: 65.4%; width: 25.5%; height: 29.1%"></button>
+              </div>
+              <div class="cam-bottom">
+                <div class="cam-head"><span>인식됨</span><span id="camTotal">4종 · 5개</span></div>
+                <div class="cam-chips" id="camChips">
+                  <span class="chip" data-cat="plastic" style="--c: var(--plastic)"><i class="ti ti-recycle"></i>플라스틱 <b>2</b></span>
+                  <span class="chip" data-cat="can" style="--c: var(--can)"><i class="ti ti-bottle"></i>캔 <b>1</b></span>
+                  <span class="chip" data-cat="paper" style="--c: var(--paper)"><i class="ti ti-news"></i>종이 <b>1</b></span>
+                  <span class="chip" data-cat="glass" style="--c: var(--glass)"><i class="ti ti-glass-full"></i>유리 <b>1</b></span>
+                  <span class="chip zero" data-cat="trash" style="--c: var(--general)"><i class="ti ti-trash"></i>일반 <b>0</b></span>
+                </div>
+                <button type="button" class="shutter" id="shutter" aria-label="촬영하고 확인 시트 열기"><i class="ti ti-camera"></i></button>
+              </div>
+              <div class="cam-sheet" id="camSheet">
+                <div class="handle"></div>
+                <div class="cs-title">이렇게 담을까요?</div>
+                <div class="cs-sub">다르면 개수를 고쳐 주세요.</div>
+                <div class="cs-row" data-cat="plastic"><span class="cs-icon" style="--c: var(--plastic)"><i class="ti ti-recycle"></i></span><span class="cs-name">플라스틱<small>인식된 그대로예요</small></span><span class="stepper"><button type="button" data-d="-1" aria-label="플라스틱 하나 빼기">−</button><b>2</b><button type="button" data-d="1" aria-label="플라스틱 하나 더하기">+</button></span></div>
+                <div class="cs-row" data-cat="can"><span class="cs-icon" style="--c: var(--can)"><i class="ti ti-bottle"></i></span><span class="cs-name">캔<small>인식된 그대로예요</small></span><span class="stepper"><button type="button" data-d="-1" aria-label="캔 하나 빼기">−</button><b>1</b><button type="button" data-d="1" aria-label="캔 하나 더하기">+</button></span></div>
+                <div class="cs-row" data-cat="paper"><span class="cs-icon" style="--c: var(--paper)"><i class="ti ti-news"></i></span><span class="cs-name">종이<small>인식된 그대로예요</small></span><span class="stepper"><button type="button" data-d="-1" aria-label="종이 하나 빼기">−</button><b>1</b><button type="button" data-d="1" aria-label="종이 하나 더하기">+</button></span></div>
+                <div class="cs-row" data-cat="glass"><span class="cs-icon" style="--c: var(--glass)"><i class="ti ti-glass-full"></i></span><span class="cs-name">유리<small>인식된 그대로예요</small></span><span class="stepper"><button type="button" data-d="-1" aria-label="유리 하나 빼기">−</button><b>1</b><button type="button" data-d="1" aria-label="유리 하나 더하기">+</button></span></div>
+                <div class="cs-row" data-cat="trash"><span class="cs-icon" style="--c: var(--general)"><i class="ti ti-trash"></i></span><span class="cs-name">일반쓰레기<small>직접 더할 수 있어요</small></span><span class="stepper"><button type="button" data-d="-1" aria-label="일반쓰레기 하나 빼기">−</button><b>0</b><button type="button" data-d="1" aria-label="일반쓰레기 하나 더하기">+</button></span></div>
+                <div class="cs-actions"><button type="button" id="sheetRetry">다시 찍기</button><button type="button" id="sheetSave">5개 담기</button></div>
+              </div>
+              <span class="tap" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <div class="vision-side">
+          <p class="side-over">5가지 분류 색</p>
+          <h3>카드를 누르면 화면에서<br>같은 종류가 강조됩니다</h3>
+          <div class="waste-grid" id="wasteGrid">
+            <button type="button" class="waste" data-target="plastic" style="--c: var(--plastic)"><span class="w-icon"><i class="ti ti-recycle"></i></span><b>플라스틱</b><code>plastic</code><span class="w-hex">#3A75AE</span></button>
+            <button type="button" class="waste" data-target="can" style="--c: var(--can)"><span class="w-icon"><i class="ti ti-bottle"></i></span><b>캔</b><code>can</code><span class="w-hex">#C97A17</span></button>
+            <button type="button" class="waste" data-target="paper" style="--c: var(--paper)"><span class="w-icon"><i class="ti ti-news"></i></span><b>종이</b><code>paper</code><span class="w-hex">#12784F</span></button>
+            <button type="button" class="waste" data-target="glass" style="--c: var(--glass)"><span class="w-icon"><i class="ti ti-glass-full"></i></span><b>유리</b><code>glass</code><span class="w-hex">#7A63BC</span></button>
+            <button type="button" class="waste" data-target="trash" style="--c: var(--general)"><span class="w-icon"><i class="ti ti-trash"></i></span><b>일반쓰레기</b><code>trash</code><span class="w-hex">#7D8783</span></button>
+          </div>
+          <div class="vision-stats">
+            <div><b>0.7초</b><span>실시간 인식 주기</span></div>
+            <div><b>640×640</b><span>모델 입력 크기</span></div>
+            <div><b>5종</b><span>분류 클래스</span></div>
+          </div>
+          <div class="hybrid">
+            <span class="hy-icon"><i class="ti ti-adjustments-horizontal"></i></span>
+            <div><b>AI 인식과 직접 보정을 함께</b><span>실시간 미리보기는 0.7초마다 인식하고, 촬영 직후 열리는 확인 시트에서 개수를 수정할 수 있습니다.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reward">
+    <div class="wrap split">
+      <div class="split-media">
+        <div class="phone demo">
+          <div class="screen demo-screen" id="buy-demo" data-plan='[{"x":73.1,"y":68.1,"hold":1300},{"x":50,"y":92.2,"hold":1200},{"x":69.2,"y":59,"hold":1100},{"x":69.2,"y":59,"hold":1100},{"hold":2400}]'>
+            <img class="on" src="img/shop.webp" alt="포인트 샵 화면. 내 포인트 1,240P와 에코 아이템 상품 목록." width="585" height="1266">
+            <img src="img/buy-1.webp" alt="상품 상세 화면. 생분해 쓰레기봉투 800P." width="585" height="1266">
+            <img src="img/buy-2.webp" alt="교환 확인 팝업. 800P로 교환할까요? 교환 후 잔액 440P." width="585" height="1266">
+            <img src="img/buy-3.webp" alt="교환 완료 팝업. 생분해 쓰레기봉투가 쿠폰함에 담겼어요." width="585" height="1266">
+            <img src="img/buy-4.webp" alt="쿠폰함 화면. 생분해 쓰레기봉투 쿠폰이 맨 위에 있다." width="585" height="1266">
+            <span class="cursor" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 2 L4 20 L9 15.5 L12.5 22.5 L15.5 21 L12 14 L19 14 Z" fill="#FFFFFF" stroke="#151A0B" stroke-width="1.6" stroke-linejoin="round"></path></svg></span>
+          </div>
+        </div>
+        <ol class="demo-steps" data-for="buy-demo" aria-label="교환 순서">
+          <li class="on">상품 고르기</li><li>교환</li><li>확인</li><li>완료</li><li>쿠폰함</li>
+        </ol>
+      </div>
+      <div class="split-copy">
+        <h2>적립한 포인트로<br>교환하는 쿠폰</h2>
+        <p class="body">에코백과 집게 같은 에코 아이템부터 아메리카노, 편의점·마트 금액권, 문화상품권까지 포인트로 교환할 수 있습니다. 교환한 쿠폰은 쿠폰함에서 관리합니다.</p>
+        <ul class="tags" aria-label="상품 종류">
+          <li><i class="ti ti-leaf"></i>에코 아이템</li><li><i class="ti ti-coffee"></i>카페·디저트</li><li><i class="ti ti-tools-kitchen-2"></i>외식·푸드</li><li><i class="ti ti-building-store"></i>편의점·마트</li><li><i class="ti ti-gift"></i>문화·상품권</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section together" id="together">
+    <div class="wrap">
+      <header class="sec-head center">
+        <h2>함께 걸으며<br>오래 이어 가는 활동</h2>
+      </header>
+      <div class="duo">
+        <article class="duo-card rise">
+          <h3>동네 그룹</h3>
+          <p>가까운 그룹에 가입해 함께 걷고, 완료한 활동은 그룹에 바로 공유합니다. 그룹별 수거량과 순위도 확인할 수 있습니다.</p>
+          <ul class="chips"><li><i class="ti ti-user-check"></i>자유 가입 · 승인제</li><li><i class="ti ti-trophy"></i>그룹 랭킹</li><li><i class="ti ti-photo"></i>활동 사진 모음</li></ul>
+          <div class="phone demo">
+            <div class="screen demo-screen" id="group-demo" data-plan='[{"x":45,"y":23.5,"hold":1200},{"hold":1200,"scroll":3600,"after":2000}]'>
+              <img class="on" src="img/group.webp" alt="그룹 화면. 내 그룹 굴포천 러닝 줍깅과 추천 그룹 목록." width="585" height="1266">
+              <div class="scroll-shot"><img src="img/chat-base.webp" alt="" width="585" height="1266"><div class="ss-win" style="top: 14.22%; height: 74.41%"><img src="img/chat-list.webp" alt="그룹 채팅방. 멤버들이 모일 시간과 코스를 이야기하고, 플로깅 경로 카드를 공유한 대화." width="585" height="2053"></div></div>
+              <span class="tap" aria-hidden="true"></span>
+            </div>
+          </div>
+          <ol class="demo-steps" data-for="group-demo" aria-label="화면 순서"><li class="on">내 그룹</li><li>그룹 채팅방</li></ol>
+        </article>
+        <article class="duo-card rise">
+          <h3>AI 환경 뉴스</h3>
+          <p>매일 발행되는 환경 뉴스를 AI가 핵심만 요약해 제공합니다. 긴 기사를 다 읽지 않아도 주요 흐름을 파악할 수 있습니다.</p>
+          <ul class="chips"><li><i class="ti ti-sparkles"></i>Gemini 2.5 Flash 요약</li><li><i class="ti ti-news"></i>네이버 뉴스 수집</li></ul>
+          <div class="phone demo">
+            <div class="screen demo-screen" id="news-demo" data-plan='[{"x":50,"y":38,"hold":1200},{"x":73.8,"y":89.3,"hold":2000,"quiet":1},{"hold":2400}]'>
+              <img class="on" src="img/news.webp" alt="환경 뉴스 목록. 기사마다 AI 요약 문장이 붙어 있다." width="585" height="1266">
+              <img src="img/news-detail.webp" alt="뉴스 상세 화면. AI 요약과 핵심 숫자 카드." width="585" height="1266">
+              <img src="img/news-detail-liked.webp" alt="뉴스 상세 화면 아래 '요약이 도움이 됐나요?'에서 좋아요를 누른 상태." width="585" height="1266">
+              <span class="tap" aria-hidden="true"></span>
+            </div>
+          </div>
+          <ol class="demo-steps" data-for="news-demo" aria-label="화면 순서"><li class="on">뉴스 목록</li><li>기사 상세</li><li>요약 평가</li></ol>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="record">
+    <div class="wrap split reverse">
+      <div class="split-copy">
+        <h2>걸어온 길을<br>한눈에 돌아보는 내 활동</h2>
+        <ol class="act-tabs" data-for="act-demo" aria-label="내 활동 탭">
+          <li class="on"><button type="button" class="act-tab"><span class="n">01</span><span class="t"><b>기록</b><span>최근 활동을 날짜별로 모아 이동 경로와 거리, 시간, 수거량을 카드로 보여 줍니다. 진행 중인 챌린지는 진행률 막대로 표시합니다.</span></span></button></li>
+          <li><button type="button" class="act-tab"><span class="n">02</span><span class="t"><b>뱃지</b><span>뱃지 33종을 한 화면에서 확인합니다. 획득하지 않은 뱃지는 잠금 상태로 표시되어 남은 목표를 바로 알 수 있습니다.</span></span></button></li>
+          <li><button type="button" class="act-tab"><span class="n">03</span><span class="t"><b>그래프</b><span>걸음 수, 칼로리, 수거량을 주간·월간·누적 단위로 지난 기간과 비교합니다. 가장 많이 걸은 요일은 왕관으로 표시하고, 수거한 쓰레기는 종류별 도넛 그래프로 보여 줍니다.</span></span></button></li>
+        </ol>
+      </div>
+      <div class="split-media rise">
+        <div class="phone demo">
+          <div class="screen demo-screen" id="act-demo" data-plan='[{"x":22,"y":14.2,"hold":2200},{"x":36.2,"y":14.2,"hold":2400},{"x":9.2,"y":14.2,"hold":1800,"scroll":1400,"after":2600}]'>
+            <img class="on" src="img/activity-record.webp" alt="내 활동 화면의 기록 탭. 최근 활동 3건과 진행 중인 챌린지." width="585" height="1266">
+            <img src="img/activity-badge.webp" alt="내 활동 화면의 뱃지 탭. 지금까지 받은 뱃지 33종 중 14종." width="585" height="1266">
+            <div class="scroll-shot graph-shot"><img src="img/graph-base.webp" alt="" width="585" height="1266"><div class="ss-win" style="top: 23.93%; height: 64.69%">
+              <div class="ss-move">
+                <img src="img/graph-list.webp" alt="내 활동 화면의 그래프 탭. 주간 걸음 수·칼로리·수거량, 가장 많이 걸은 금요일에 왕관이 붙은 요일별 활동 막대그래프, 쓰레기 종류별 도넛 그래프." width="585" height="970">
+                <span class="gcol" style="left: 13.19%; top: 35.23%; width: 4.62%; height: 18.87%"><i style="--h: 44.26%"></i></span>
+                <span class="gcol" style="left: 36.19%; top: 35.23%; width: 4.62%; height: 18.87%"><i style="--h: 33.2%"></i></span>
+                <span class="gcol peak" style="left: 59.19%; top: 35.23%; width: 4.62%; height: 18.87%"><svg viewBox="0 0 18 13" aria-hidden="true"><path d="M0 13 L0 4.55 L5.04 8.06 L9 .78 L12.96 8.06 L18 4.55 L18 13 Z"/><circle cx=".9" cy="4.16" r="1.56"/><circle cx="9" cy="1.3" r="1.56"/><circle cx="17.1" cy="4.16" r="1.56"/></svg><i style="--h: 73.77%"></i></span>
+                <svg class="gdonut" viewBox="0 0 120 120" aria-hidden="true" style="left: 9.74%; top: 73.4%; width: 30.77%"><circle cx="60" cy="60" r="49" pathLength="100" style="stroke: #5F9EE8; --len: 33.33; --at: 0; --rot: -90deg"/><circle cx="60" cy="60" r="49" pathLength="100" style="stroke: #E07B2E; --len: 26.67; --at: 33.33; --rot: 30deg"/><circle cx="60" cy="60" r="49" pathLength="100" style="stroke: #31C88B; --len: 20; --at: 60; --rot: 126deg"/><circle cx="60" cy="60" r="49" pathLength="100" style="stroke: #8E7EC4; --len: 13.33; --at: 80; --rot: 198deg"/><circle cx="60" cy="60" r="49" pathLength="100" style="stroke: #9AA3A0; --len: 6.67; --at: 93.33; --rot: 246deg"/></svg>
+              </div>
+            </div></div>
+            <span class="tap" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap badge-strip">
+      <h3 class="sub-head">획득할 수 있는 뱃지 예시</h3>
+      <div class="badges" role="group" aria-label="뱃지 예시">
+        <button type="button" class="badge on" style="--i: 0" data-name="걸음마 성공" data-cond="플로깅 1회 완료"><img src="img/badge/01_running_shoe.webp" alt="" width="190" height="200"><span>걸음마 성공</span></button>
+        <button type="button" class="badge" style="--i: 1" data-name="삼십 분의 여유" data-cond="30분 이상 플로깅"><img src="img/badge/04_stopwatch.webp" alt="" width="190" height="200"><span>삼십 분의 여유</span></button>
+        <button type="button" class="badge" style="--i: 2" data-name="플라스틱 헌터" data-cond="플라스틱 누적 50개"><img src="img/badge/06_recycling_symbol.webp" alt="" width="190" height="200"><span>플라스틱 헌터</span></button>
+        <button type="button" class="badge" style="--i: 3" data-name="새벽 플로거" data-cond="오전 6시 이전 활동 5회"><img src="img/badge/16_sunrise.webp" alt="" width="190" height="200"><span>새벽 플로거</span></button>
+        <button type="button" class="badge" style="--i: 4" data-name="공원 지킴이" data-cond="공원 코스 5회 활동"><img src="img/badge/25_deciduous_tree.webp" alt="" width="190" height="200"><span>공원 지킴이</span></button>
+        <button type="button" class="badge" style="--i: 5" data-name="동네 한 바퀴" data-cond="누적 이동거리 10km"><img src="img/badge/13_world_map.webp" alt="" width="190" height="200"><span>동네 한 바퀴</span></button>
+        <button type="button" class="badge" style="--i: 6" data-name="백 킬로 달성" data-cond="누적 수거량 100kg"><img src="img/badge/22_trophy.webp" alt="" width="190" height="200"><span>백 킬로 달성</span></button>
+        <button type="button" class="badge" style="--i: 7" data-name="랭킹 1위" data-cond="그룹 랭킹 1위 달성"><img src="img/badge/30_crown.webp" alt="" width="190" height="200"><span>랭킹 1위</span></button>
+      </div>
+      <p class="badge-cond" id="badgeCond" aria-live="polite"><b>걸음마 성공</b>플로깅 1회 완료</p>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>잉크와 라임,<br>두 가지 색으로</h2>
+      </header>
+
+      <div class="palette">
+        <div class="swatch" style="--c: #2A2F2C"><i></i><b>잉크</b><span>#2A2F2C</span></div>
+        <div class="swatch" style="--c: #EEFF77"><i></i><b>라임</b><span>#EEFF77</span></div>
+        <div class="swatch" style="--c: #A9C81E"><i></i><b>진한 라임</b><span>#A9C81E</span></div>
+        <div class="swatch" style="--c: #8A8F8B"><i></i><b>회색</b><span>#8A8F8B</span></div>
+        <div class="swatch" style="--c: #F4F6F5"><i></i><b>소프트</b><span>#F4F6F5</span></div>
+        <div class="swatch" style="--c: #242926"><i></i><b>다크</b><span>#242926</span></div>
+      </div>
+
+      <h3 class="sub-head">여섯 가지 원칙</h3>
+      <div class="principles">
+        <article class="principle">
+          <span class="key lime">+430P</span>
+          <h4>라임은 하나뿐인 강조색</h4>
+          <p class="sub">꼭 필요한 곳에만 사용</p>
+          <p>화면은 차콜과 회색으로 차분하게 두고, 라임은 주요 버튼, 핵심 단어 형광펜, 포인트 적립처럼 시선이 머물러야 할 곳에만 사용합니다. 흰 바탕 위 글자색으로는 쓰지 않고 면이나 어두운 바탕에만 적용합니다.</p>
+        </article>
+        <article class="principle">
+          <span class="key dark">14:32</span>
+          <h4>걷는 중에는 한눈에, 한 손으로</h4>
+          <p class="sub">걷는 동안 보는 화면은 어둡고 크게</p>
+          <p>플로깅 화면은 어두운 배경에 경과 시간을 가장 크게 표시합니다. 촬영 버튼은 엄지가 닿는 아래 가운데에 있고, 종료는 전원 버튼을 길게 눌러야 합니다.</p>
+        </article>
+        <article class="principle">
+          <span class="key"><img src="img/pine.webp" alt="" width="98" height="128"></span>
+          <h4>숫자는 체감 단위로</h4>
+          <p class="sub">탄소 6.6kg은 소나무 1그루로 표시</p>
+          <p>탄소 감축량은 소나무 그루 수로, 수거 개수는 포인트로 환산해 보여 줍니다.</p>
+        </article>
+        <article class="principle">
+          <span class="key dots" aria-hidden="true"><i style="--c: var(--plastic)"></i><i style="--c: var(--can)"></i><i style="--c: var(--paper)"></i><i style="--c: var(--glass)"></i><i style="--c: var(--general)"></i></span>
+          <h4>색이 곧 데이터</h4>
+          <p class="sub">쓰레기 종류마다 정해진 고유 색</p>
+          <p>플라스틱은 파랑, 캔은 앰버, 종이는 초록, 유리는 보라, 일반쓰레기는 회색. 같은 다섯 색을 챌린지와 활동 기록에서도 걸음(파랑), 수거(초록), 그룹(앰버)을 나타내는 데 다시 써서, 앱 전체가 다섯 가지 색 체계를 따릅니다.</p>
+        </article>
+        <article class="principle">
+          <span class="key"><img src="img/camera3d.webp" alt="" width="128" height="105"></span>
+          <h4>입력은 앱이 대신</h4>
+          <p class="sub">촬영 한 번으로 끝나는 수거 기록</p>
+          <p>위치 기록은 화면이 꺼져도 이어지고, 인증샷을 찍으면 결과가 그룹에 자동으로 공유됩니다.</p>
+        </article>
+        <article class="principle">
+          <span class="key"><img src="img/check3d.webp" alt="" width="128" height="128"></span>
+          <h4>AI 결과는 사람이 확인할 수 있게</h4>
+          <p class="sub">틀려도 그 자리에서 바로 수정</p>
+          <p>인식된 개수는 확인 시트에서 고칠 수 있고, 고친 항목에는 "직접 고쳤어요"가 붙습니다. 뉴스 요약에는 "AI가 요약한 내용이라 원문과 다를 수 있어요"라는 안내와 원문 보기 버튼을 함께 제공합니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section char-band" id="character">
+    <div class="wrap">
+      <div class="char-grid">
+        <figure class="char-figure">
+          <div class="char-art">
+            <img src="img/char-main.webp" alt="두 팔을 벌리고 달려 나가는 플로고" width="900" height="866">
+            <span class="pin" data-pin="1" style="left: 66%; top: 8%">1</span>
+            <span class="pin" data-pin="2" style="left: 76%; top: 66%">2</span>
+            <span class="pin" data-pin="3" style="left: 17%; top: 23%">3</span>
+          </div>
+        </figure>
+        <div class="char-copy">
+          <h2>주운 자리에서 돋아난<br>새싹, <mark>플로고</mark></h2>
+          <p class="body">쓰레기를 주운 자리에 햇볕이 들면 보도블록 틈에서 새싹이 돋아납니다. 그 새싹이 플로고입니다. 이름은 "플로깅하러, 고!"에서 따왔습니다.</p>
+          <ol class="design-notes">
+            <li data-pin="1"><span class="num">1</span><div><b>새싹 두 잎</b><span>플로깅을 이루는 두 동작, 걷기와 줍기를 잎 두 장에 하나씩 담았습니다. 둘 중 하나만으로는 플로깅이 아니듯, 두 잎이 함께 돋아야 새싹이 완성됩니다.</span></div></li>
+            <li data-pin="2"><span class="num">2</span><div><b>봉투 모양 몸통</b><span>묶은 쓰레기봉투를 둥글게 다듬은 모양입니다. 봉투 매듭 자리에 새싹을 달아, 주운 쓰레기가 새싹으로 바뀌는 순간을 표현했습니다. 몸통은 살짝 기울여 걷는 리듬을 주었습니다. 몸을 감싼 라임은 막 돋아난 새싹의 연둣빛이자 앱의 강조색입니다.</span></div></li>
+            <li data-pin="3"><span class="num">3</span><div><b>가볍게 뛰는 몸짓</b><span>두 팔을 번쩍 들고 한 발을 내디딘 자세는 우리의 목표인 쉽고 간편한 플로깅을 몸짓으로 표현했습니다. 큰 결심 없이 동네를 한 바퀴 돌러 나서는 가벼운 기분을 담았습니다.</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section final" id="download">
+    <div class="wrap final-inner">
+      <img src="img/mascot-wink.webp" alt="두 팔을 벌리고 달려 나가는 플로고" width="560" height="512">
+      <h2>오늘, 가볍게 <mark>줍죠</mark></h2>
+      <p class="body">앱은 추후 다운로드 가능합니다.</p>
+      <a class="btn" href="#download">앱 다운로드</a>
+      <p class="req">Android 8.0 이상 · 위치, 카메라, 신체 활동 권한이 필요합니다</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span class="brand"><img src="img/app-icon.webp" alt="" width="26" height="26">PLOGGO</span>
+    <ul class="stack" aria-label="기술 스택">
+      <li>Flutter · Riverpod</li><li>FastAPI</li><li>YOLOv8n (ONNX)</li><li>Gemini 2.5 Flash</li><li>네이버 지도 SDK</li><li>Tmap 보행자 API</li><li>Firebase</li>
+    </ul>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+document.documentElement.classList.add('js');
+var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var HAS_IO = 'IntersectionObserver' in window;
+
+// 아래로 스크롤해서 들어올 때만 재생하는 공통 도우미.
+// 요소가 화면 높이의 at 지점(기본 50%, 화면 가운데)을 넘어 들어오면 onEnter, 화면 아래로 완전히 빠지면 onReset을 부른다.
+// 위로 스크롤해서 위쪽에서 다시 들어올 때는 재생하지 않는다. 처음 열었을 때 이미 보이는 요소는 건드리지 않는다.
+function playFromBelow(el, onEnter, onReset, at) {
+  at = at || 0.5;
+  var armed = el.getBoundingClientRect().top > window.innerHeight * at;
+  if (armed) onReset();
+  new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting && armed) { armed = false; onEnter(); }
+  }, { rootMargin: '0px 0px -' + Math.round((1 - at) * 100) + '% 0px' }).observe(el);
+  new IntersectionObserver(function (entries) {
+    var e = entries[0];
+    if (!e.isIntersecting && e.boundingClientRect.top > 0 && !armed) { armed = true; onReset(); }
+  }).observe(el);
+}
+
+// 등장 효과: 아래로 스크롤해서 들어오는 요소를 형제 순서대로 천천히 띄운다
+(function () {
+  if (REDUCE || !HAS_IO) return;
+  var singles = '.sec-head, .facts > div, .problem, .split-copy, .split-media, .impact-copy > *, .duo-card, ' +
+    '.swatch, .principle, .char-figure, .char-copy, .photo-slot, .final-inner > *, .sim-card, .algo-panel, ' +
+    '.vision-stage, .vision-side > *, .badge-strip';
+  document.querySelectorAll(singles).forEach(function (el) {
+    el.classList.add('rise');
+    var sibs = Array.prototype.filter.call(el.parentNode.children, function (c) { return c.matches(singles); });
+    // 그룹 카드는 하나씩 차례로 보이도록 간격을 넓힌다
+    var gap = el.matches('.duo-card') ? 700 : 280;
+    el.style.setProperty('--d', (sibs.indexOf(el) % 6) * gap + 'ms');
+    // 컨셉의 숫자 상자는 다른 요소보다 더 올라온 화면 40% 지점에서 시작한다.
+    // 페이지 맨 끝의 마지막 화면은 화면 가운데까지 올라오지 못하므로 화면에 들어오자마자 시작한다.
+    playFromBelow(el, function () { el.classList.remove('pre'); }, function () { el.classList.add('pre'); },
+      el.matches('.facts > div') ? 0.4 : el.closest('.final') ? 0.97 : 0);
+  });
+
+  // 기능 목록은 스크롤과 상관없이 빠르게 연달아 올라오고, 이어 갈 일은 앞 상자가 다음 상자를 밀어내듯 나온다
+  // 기능 목록은 줄마다 따로 떠오른다. 여러 줄이 한꺼번에 들어와도 위 줄부터 0.28초씩 늦게 뜬다
+  var nextAt = 0;
+  var pending = [];
+  function flushRows() {
+    var now = performance.now();
+    pending.sort(function (a, b) { return a.i - b.i; }).forEach(function (row) {
+      var start = Math.max(now, nextAt);
+      nextAt = start + 280;
+      row.el.style.setProperty('--d', Math.round(start - now) + 'ms');
+      row.el.classList.remove('pre');
+    });
+    pending = [];
+  }
+  document.querySelectorAll('.features .feature').forEach(function (el, i) {
+    el.classList.add('rise');
+    playFromBelow(el, function () {
+      if (!pending.length) requestAnimationFrame(flushRows);
+      pending.push({ el: el, i: i });
+    }, function () { el.classList.add('pre'); });
+  });
+  var plans = document.querySelector('.plans');
+  playFromBelow(plans, function () { plans.classList.remove('pre'); }, function () { plans.classList.add('pre'); });
+})();
+
+// 정산 화면 도장 연출: 앱 SettlementScreen의 진입 연출(3.4초)을 같은 구간·곡선으로 옮겼다.
+// 0.06~0.20 도장이 2.6배 크기·-12°에서 떨어져 쿵 찍히고, 0.20~0.40 살짝 찌그러졌다 돌아온다.
+// 0.20~0.42 화면이 감쇠 진동하고, 컨페티 16조각이 떨어지며, 보상 카드는 0.30부터 0.06 간격으로 떠오른다.
+// 진행도가 at에 닿으면 done을 부른다(데스크톱에서는 도장이 찍힌 뒤 오른쪽 포인트 표를 이어서 재생한다).
+var FINISH = (function () {
+  var T = 3400;
+  var PALETTE = ['#EEFF77', '#3A75AE', '#C97A17', '#12784F', '#7A63BC'];
+  function seg(v, a, b) { return Math.min(1, Math.max(0, (v - a) / (b - a))); }
+  // 앱 _riseCurve와 같은 cubic-bezier(.16, .85, .2, 1)
+  function rise(x) {
+    var lo = 0, hi = 1, t = x;
+    for (var i = 0; i < 24; i++) {
+      t = (lo + hi) / 2;
+      var cx = 3 * .16 * t * (1 - t) * (1 - t) + 3 * .2 * t * t * (1 - t) + t * t * t;
+      if (cx < x) lo = t; else hi = t;
+    }
+    return 3 * .85 * t * (1 - t) * (1 - t) + 3 * t * t * (1 - t) + t * t * t;
+  }
+  // 앱처럼 매번 같은 모양으로 떨어지도록 고정 시드 난수를 쓴다
+  function rng(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+  function make(el) {
+    var screen = el.querySelector('.fs-screen');
+    var stamp = el.querySelector('.fs-stamp');
+    var cards = el.querySelectorAll('.fs-card');
+    var layer = el.querySelector('.fs-confetti');
+    var r = rng(7);
+    var bits = [];
+    for (var i = 0; i < 16; i++) {
+      var b = document.createElement('i');
+      b.style.background = PALETTE[i % PALETTE.length];
+      layer.appendChild(b);
+      bits.push({ el: b, left: r(), w: 6 + r() * 6, h: 9 + r() * 9, delay: r() * 0.22, rot: (r() * 2 - 1) * Math.PI });
+    }
+    var raf = 0;
+    // v는 0~1 진행도. 길이 값은 앱 화면 폭 390 기준이라 실제 폭에 맞춰 줄인다.
+    function draw(v) {
+      var W = el.clientWidth, H = el.clientHeight, k = W / 390;
+      var drop = Math.pow(seg(v, 0.06, 0.20), 3);
+      var base = 2.6 - 1.6 * drop;
+      var land = seg(v, 0.20, 0.40);
+      var sq = Math.sin(land * Math.PI * 3) * 0.07 * (1 - land);
+      stamp.style.opacity = seg(v, 0.06, 0.12);
+      stamp.style.transform = 'rotate(' + (-12 + 12 * drop) + 'deg) scale(' + base * (1 + sq) + ', ' + base * (1 - sq) + ')';
+      var s = seg(v, 0.20, 0.42);
+      if (s <= 0 || s >= 1) screen.style.transform = '';
+      else screen.style.transform = 'translate(' + Math.sin(s * Math.PI * 6) * 11 * (1 - s) * k + 'px, ' + Math.cos(s * Math.PI * 5) * 11 * 0.55 * (1 - s) * k + 'px) rotate(' + Math.sin(s * Math.PI * 6) * 0.5 * (1 - s) + 'deg)';
+      cards.forEach(function (c, n) {
+        var t = rise(seg(v, 0.30 + n * 0.06, 0.80 + n * 0.06));
+        c.style.opacity = t;
+        c.style.transform = 'translateY(' + 22 * (1 - t) * k + 'px) scale(' + (0.97 + 0.03 * t) + ')';
+      });
+      bits.forEach(function (c) {
+        var t = seg(v, c.delay, c.delay + 0.6);
+        c.el.style.opacity = t <= 0 || t >= 1 ? 0 : (t < 0.12 ? t / 0.12 : 1);
+        c.el.style.width = c.w * k + 'px';
+        c.el.style.height = c.h * k + 'px';
+        c.el.style.transform = 'translate(' + c.left * (W - c.w * k) + 'px, ' + (-40 * k + (H + 60 * k) * t) + 'px) rotate(' + c.rot * t * 3.4 + 'rad)';
+      });
+    }
+    return {
+      play: function (done, at) {
+        cancelAnimationFrame(raf);
+        var t0 = performance.now();
+        var called = false;
+        (function tick(now) {
+          var v = Math.min(1, (now - t0) / T);
+          draw(v);
+          if (done && !called && v >= (at || 1)) { called = true; done(); }
+          if (v < 1) raf = requestAnimationFrame(tick);
+        })(t0);
+      },
+      reset: function () { cancelAnimationFrame(raf); draw(0); },
+      end: function () { cancelAnimationFrame(raf); draw(1); }
+    };
+  }
+  var shots = Array.prototype.map.call(document.querySelectorAll('.finish-shot'), make);
+  var desk = shots[0];
+  var points = document.querySelector('.points');
+  var wide = window.matchMedia('(min-width: 901px)');
+  if (REDUCE || !HAS_IO) { shots.forEach(function (s) { s.end(); }); return { play: function () {}, reset: function () {} }; }
+  shots.forEach(function (s) { s.reset(); });
+  // 좁은 화면: 단계 안의 정산 화면이 들어오면 도장을 찍고, 포인트 표는 따로 재생한다
+  var mobileShot = document.querySelector('.step-phone .finish-shot');
+  playFromBelow(mobileShot, function () { shots[1].play(); }, function () { shots[1].reset(); });
+  if (wide.matches) points.classList.add('wait');
+  else playFromBelow(points, function () { points.classList.add('play'); }, function () { points.classList.remove('play'); });
+  // 넓은 화면: 고정 폰이 정산 화면으로 넘어오면 도장을 찍고, 끝나면 오른쪽 포인트 표를 재생한다
+  return {
+    play: function () {
+      if (!wide.matches) return;
+      desk.play(function () { points.classList.remove('wait'); points.classList.add('play'); }, 0.30);
+    },
+    reset: function () {
+      if (!wide.matches) return;
+      desk.reset();
+      points.classList.remove('play');
+      points.classList.add('wait');
+    }
+  };
+})();
+
+// 스크롤 연동: 컨셉 문장 강조, 이용 흐름 화면 전환, 다크 밴드 펼침, 내비게이션 구분선
+(function () {
+  var nav = document.querySelector('.nav');
+  var linesBox = document.querySelector('.thesis-lines');
+  var lines = linesBox.querySelectorAll('p');
+  var steps = document.querySelectorAll('.step');
+  var stage = document.querySelector('.flow-stage');
+  var shots = stage.querySelectorAll('.phone > *');
+  var curStep = 0;
+  // 환경 영향력 파트는 가만히 두므로 쓰레기 인식 밴드만 펼친다
+  var bands = document.querySelectorAll('.band:not(#impact)');
+  var wide = window.matchMedia('(min-width: 901px)');
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var vh = window.innerHeight;
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+
+    // 문장 묶음 윗선이 화면 40% 지점에 오면 둘째 줄, 15% 지점에 오면 셋째 줄로 넘어간다
+    var r = linesBox.getBoundingClientRect();
+    var p = Math.min(1, Math.max(0, (vh * 0.65 - r.top) / (vh * 0.75)));
+    var idx = Math.min(lines.length - 1, Math.floor(p * lines.length));
+    lines.forEach(function (l, i) { l.classList.toggle('on', i === idx); });
+
+    // 폰 위에서 40% 높이의 선에 가장 가까운 단계의 화면을 보여 준다. 설명 글이 폰 위쪽에 맞춰 놓인다
+    if (wide.matches) {
+      var sr = stage.getBoundingClientRect();
+      var line = sr.top + sr.height * 0.4;
+      var best = 0;
+      var bestDist = Infinity;
+      steps.forEach(function (s, i) {
+        var b = s.getBoundingClientRect();
+        var d = Math.abs(b.top + b.height / 2 - line);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      steps.forEach(function (s, i) { s.classList.toggle('is-active', i === best); });
+      shots.forEach(function (img, i) { img.classList.toggle('on', i === best); });
+      // 아래로 내려와 정산 화면이 되면 도장을 찍고, 위 단계로 되돌아가면 처음 상태로 돌린다
+      if (best !== curStep) {
+        if (best === 3 && curStep < 3) FINISH.play();
+        else if (best < 3 && curStep === 3) FINISH.reset();
+        curStep = best;
+      }
+    }
+
+    if (!REDUCE) {
+      var max = Math.min(48, window.innerWidth * 0.04);
+      bands.forEach(function (band) {
+        var b = band.getBoundingClientRect();
+        var t = Math.min(1, Math.max(0, (vh - b.top) / (vh * 0.8)));
+        band.style.setProperty('--band-inset', ((1 - t) * max).toFixed(1) + 'px');
+        band.style.setProperty('--band-r', ((1 - t) * 40).toFixed(1) + 'px');
+      });
+    }
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// 숫자 올라가기: 아래로 스크롤해서 들어오면 1부터 최종 값까지 센다. 평소에는 최종 값이 보인다.
+(function () {
+  if (REDUCE || !HAS_IO) return;
+  var NUM = /\d[\d,]*/g;
+  document.querySelectorAll('.count').forEach(function (el) {
+    var tpl = el.textContent;
+    var goals = (tpl.match(NUM) || []).map(function (n) { return Number(n.replace(/,/g, '')); });
+    var run = 0;
+    function show(k) {
+      var i = 0;
+      el.textContent = tpl.replace(NUM, function () { return Math.round(1 + (goals[i++] - 1) * k).toLocaleString('ko-KR'); });
+    }
+    playFromBelow(el, function () {
+      var id = ++run;
+      var t0 = performance.now();
+      (function tick(now) {
+        if (id !== run) return;
+        var k = Math.min(1, (now - t0) / 2800);
+        show(1 - Math.pow(1 - k, 3));
+        if (k < 1) requestAnimationFrame(tick);
+      })(t0);
+    }, function () { run++; show(0); }, 0.4);
+  });
+})();
+
+// 홈 화면 '나의 환경 영향력' 카드 값. 계수는 앱 EcoConstants, 연간 목표는 HomeView와 같다.
+(function () {
+  var CO2_PER_KG = 1.1;       // 수거량 1kg당 CO2 감축량(kg)
+  var CO2_PER_PINE = 6.6;     // 30년생 소나무 1그루 연간 흡수량(kg)
+  var ANNUAL_GOAL = 10;       // 연간 목표(kgCO2eq)
+  var TRASH_KG = 6;           // 예시 수거량
+  var fill = document.getElementById('hcFill');
+  var pct = document.getElementById('hcPct');
+  var co2 = document.getElementById('hcCo2');
+  var tree = document.getElementById('hcTree');
+  var total = TRASH_KG * CO2_PER_KG;
+  function draw(k) {
+    var c = total * k;
+    var r = Math.min(1, c / ANNUAL_GOAL);
+    fill.style.strokeDasharray = (r * 100).toFixed(2) + ' 100';
+    fill.style.opacity = r > 0 ? 1 : 0;
+    pct.textContent = Math.round(r * 100);
+    co2.textContent = c.toFixed(1);
+    tree.textContent = (c / CO2_PER_PINE).toFixed(1);
+  }
+  // 이 파트는 왼쪽 글만 움직이고 카드는 완성된 상태로 가만히 둔다
+  draw(1);
+})();
+
+// 화면 시연: 누를 곳을 누르고 다음 화면으로 넘어간다. 화면에 보이는 동안만 반복한다.
+// 포인트 샵은 마우스 커서가 움직여 클릭하고, 그룹·뉴스는 누르는 자리에 동그라미가 떴다 사라진다.
+// 그룹·뉴스는 동시에 움직이지 않도록 동네 그룹이 끝나면 AI 환경 뉴스를 재생한다.
+// 그룹은 채팅방에 들어가 대화를 맨 아래까지 내리고, 뉴스는 기사에 들어가 '요약이 도움이 됐나요?'에 좋아요를 누른다.
+(function () {
+  function makeDemo(screen) {
+    var frames = Array.prototype.filter.call(screen.children, function (c) { return !c.matches('.cursor, .tap'); });
+    var cursor = screen.querySelector('.cursor');
+    var tap = screen.querySelector('.tap');
+    var labels = document.querySelectorAll('[data-for="' + screen.id + '"] li');
+    // 화면마다 머무는 시간(hold), 누르는 위치(x·y, 화면 크기 대비 %), 목록을 끝까지 내리는 시간(scroll)과 그 뒤 머무는 시간(after).
+    // quiet이면 누름 표시 없이 다음 화면으로 바로 바꾼다(좋아요 버튼이 그 자리에서 눌린 것처럼 보이게).
+    var plan = JSON.parse(screen.getAttribute('data-plan'));
+    var timer = null;
+    var flick = null;
+    var rewinding = null;
+    function show(n) {
+      frames.forEach(function (f, k) { f.classList.toggle('on', k === n); });
+      labels.forEach(function (l, k) { l.classList.toggle('on', k === n); });
+    }
+    // 목록을 손가락으로 두 번 밀어 올리듯 맨 아래까지 내린다
+    function scrollDown(img, ms) {
+      var d = img.parentElement.clientHeight - img.offsetHeight;
+      img.style.transition = 'transform ' + Math.round(ms * 0.45) + 'ms cubic-bezier(.2, .7, .3, 1)';
+      img.style.transform = 'translateY(' + d * 0.55 + 'px)';
+      flick = setTimeout(function () { img.style.transform = 'translateY(' + d + 'px)'; }, Math.round(ms * 0.55));
+    }
+    function rewind() {
+      screen.querySelectorAll('.ss-win > *').forEach(function (img) { img.style.transition = 'none'; img.style.transform = ''; });
+    }
+    function press(p, then) {
+      if (tap) {
+        tap.style.left = p.x + '%';
+        tap.style.top = p.y + '%';
+        tap.classList.remove('go');
+        void tap.offsetWidth;
+        tap.classList.add('go');
+        timer = setTimeout(then, 420);
+        return;
+      }
+      cursor.style.left = p.x + '%';
+      cursor.style.top = p.y + '%';
+      timer = setTimeout(function () {
+        cursor.classList.remove('click');
+        void cursor.offsetWidth;
+        cursor.classList.add('click');
+        timer = setTimeout(then, 420);
+      }, 800);
+    }
+    // 첫 화면부터 마지막 화면까지 한 번 보여 주고 첫 화면으로 돌아오면 done을 부른다
+    function play(done) {
+      var cur = 0;
+      show(0);
+      (function step() {
+        var p = plan[cur];
+        timer = setTimeout(function () {
+          function next() {
+            cur = (cur + 1) % frames.length;
+            if (p.quiet) {
+              screen.classList.add('instant');
+              show(cur);
+              requestAnimationFrame(function () { requestAnimationFrame(function () { screen.classList.remove('instant'); }); });
+            } else show(cur);
+            if (cur === 0) {
+              // 첫 화면으로 흐려지며 돌아간 뒤에 목록 위치를 되돌린다
+              rewinding = setTimeout(rewind, 400);
+              done();
+            } else step();
+          }
+          function act() { if (p.x == null || p.quiet) next(); else press(p, next); }
+          var list = frames[cur].querySelector('.ss-win > *');
+          if (p.scroll && list) {
+            scrollDown(list, p.scroll);
+            timer = setTimeout(act, p.scroll + (p.after || 0));
+          } else act();
+        }, p.hold);
+      })();
+    }
+    function stop() {
+      clearTimeout(timer);
+      clearTimeout(flick);
+      clearTimeout(rewinding);
+      rewind();
+      show(0);
+      if (tap) tap.classList.remove('go');
+    }
+    // 고른 화면으로 바로 바꾸고, 그 화면으로 오는 탭 자리에 누름 표시를 띄운다
+    function jump(n) {
+      clearTimeout(timer);
+      clearTimeout(flick);
+      clearTimeout(rewinding);
+      rewind();
+      show(n);
+      if (tap) {
+        var p = plan[(n + plan.length - 1) % plan.length];
+        tap.style.left = p.x + '%';
+        tap.style.top = p.y + '%';
+        tap.classList.remove('go');
+        void tap.offsetWidth;
+        tap.classList.add('go');
+      }
+    }
+    return { play: play, stop: stop, jump: jump };
+  }
+  // 내 활동: 왼쪽 탭 설명을 누르면 그 화면으로 바꾸고 자동 재생을 멈춘다
+  var act = document.getElementById('act-demo');
+  var actDemo = makeDemo(act);
+  var actLoop = null;
+  document.querySelectorAll('.act-tab').forEach(function (b, n) {
+    b.addEventListener('click', function () {
+      if (actLoop) actLoop.halt();
+      actDemo.jump(n);
+    });
+  });
+  if (REDUCE || !HAS_IO) return;
+  // 화면에 보이는 동안 demos를 차례로 재생하고, 마지막이 끝나면 처음부터 반복한다
+  function loop(watch, demos, io) {
+    var running = false;
+    var idx = 0;
+    function run() {
+      if (!running) return;
+      demos[idx].play(function () { idx = (idx + 1) % demos.length; run(); });
+    }
+    var obs = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        if (!running) { running = true; idx = 0; run(); }
+      } else if (running) {
+        running = false;
+        demos.forEach(function (d) { d.stop(); });
+      }
+    }, io);
+    obs.observe(watch);
+    // 사용자가 직접 화면을 고르면 반복을 그만둔다
+    return { halt: function () { running = false; obs.disconnect(); } };
+  }
+  var buy = document.getElementById('buy-demo');
+  loop(buy, [makeDemo(buy)], { threshold: 0.4 });
+  // 내 활동: 기록 → 뱃지 → 그래프 탭을 차례로 눌러 세 화면을 보여 주고, 왼쪽 설명도 함께 바뀐다
+  actLoop = loop(act, [actDemo], { threshold: 0.4 });
+  // 두 상자가 세로로 쌓이는 좁은 화면에서도 잡히도록 상자 묶음이 화면 위쪽 70% 안에 들어오면 재생한다
+  loop(document.querySelector('.duo'),
+    [makeDemo(document.getElementById('group-demo')), makeDemo(document.getElementById('news-demo'))],
+    { rootMargin: '0px 0px -30% 0px' });
+})();
+
+// 캐릭터 설명: 항목에 마우스를 올리면 그림의 해당 번호가 커진다
+(function () {
+  document.querySelectorAll('.pin').forEach(function (p, k) { p.style.setProperty('--n', k); });
+  document.querySelectorAll('.design-notes li').forEach(function (li) {
+    var pin = document.querySelector('.pin[data-pin="' + li.getAttribute('data-pin') + '"]');
+    function on() { pin.classList.add('hot'); li.classList.add('hot'); }
+    function off() { pin.classList.remove('hot'); li.classList.remove('hot'); }
+    li.addEventListener('mouseenter', on);
+    li.addEventListener('mouseleave', off);
+    pin.addEventListener('mouseenter', on);
+    pin.addEventListener('mouseleave', off);
+  });
+})();
+
+// 모바일 메뉴
+(function () {
+  var btn = document.getElementById('menuBtn');
+  var links = document.getElementById('navLinks');
+  function set(open) {
+    links.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  }
+  btn.addEventListener('click', function () { set(!links.classList.contains('open')); });
+  links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+})();
+
+// 핵심 기술 01: 단계 설명이 3.2초마다 넘어가고, 세 단계를 다 보면 같은 도착지의 코스 변경과 다른 도착지 선택을 번갈아 보여 준다.
+// 누를 수 있는 요소 없이 화면에 보이는 동안 저절로 재생한다. 지도 좌표는 화면용 예시다.
+(function () {
+  var presets = {
+    bupyeong: {
+      search: '인천 부평구 부평공원 분수광장', dest: '부평공원 분수광장',
+      variants: [
+        { eta: '2.4km · 38분', path: 'M 85 300 Q 140 305 180 264 T 320 242 L 400 176', pins: [[36, 60], [64, 55]], d: [80, 40] },
+        { eta: '2.7km · 42분', path: 'M 85 300 Q 110 240 160 220 T 310 264 L 400 176', pins: [[32, 50], [62, 60]], d: [80, 40] }
+      ]
+    },
+    gulpo: {
+      search: '인천 부평구 굴포천 생태하천 산책로', dest: '굴포천 산책로',
+      variants: [
+        { eta: '3.1km · 48분', path: 'M 85 300 Q 150 318 210 277 T 340 246 L 405 180', pins: [[42, 63], [68, 56]], d: [81, 41] },
+        { eta: '2.9km · 45분', path: 'M 85 300 Q 125 255 190 238 T 330 273 L 405 180', pins: [[38, 54], [66, 62]], d: [81, 41] }
+      ]
+    },
+    songdo: {
+      search: '인천 연수구 송도 센트럴파크', dest: '송도 센트럴파크',
+      variants: [
+        { eta: '1.9km · 29분', path: 'M 85 300 Q 160 280 200 255 T 300 238 L 390 185', pins: [[40, 58], [60, 54]], d: [78, 42] },
+        { eta: '2.2km · 34분', path: 'M 85 300 Q 140 318 220 290 T 320 255 L 390 185', pins: [[44, 66], [64, 58]], d: [78, 42] }
+      ]
+    }
+  };
+  var ORDER = ['bupyeong', 'gulpo', 'songdo'];
+  var key = 'bupyeong';
+  var idx = 0;
+  var line = document.getElementById('routeLine');
+  var hots = [document.getElementById('hot1'), document.getElementById('hot2')];
+  var dest = document.getElementById('pinDest');
+  var courseBtn = document.getElementById('courseBtn');
+  var origin = document.getElementById('pinOrigin');
+  var chips = document.querySelectorAll('.preset');
+  function apply() {
+    var p = presets[key];
+    var v = p.variants[idx % p.variants.length];
+    document.getElementById('mapSearch').textContent = p.search;
+    document.getElementById('sheetDest').textContent = p.dest;
+    document.getElementById('mapEta').textContent = v.eta;
+    line.setAttribute('d', v.path);
+    line.classList.remove('draw');
+    void line.getBoundingClientRect();
+    line.classList.add('draw');
+    hots.forEach(function (h, i) {
+      h.style.left = v.pins[i][0] + '%';
+      h.style.top = v.pins[i][1] + '%';
+      h.classList.remove('pop');
+      void h.offsetWidth;
+      h.style.animationDelay = (0.25 + i * 0.12) + 's';
+      h.classList.add('pop');
+    });
+    dest.style.left = v.d[0] + '%';
+    dest.style.top = v.d[1] + '%';
+    // 경로 첫 제어점 방향으로 내 위치 삼각형을 돌린다. 지도는 가로세로 비율이 늘어나므로 실제 크기로 환산한다.
+    var nums = v.path.match(/-?\d+(\.\d+)?/g).map(Number);
+    var mapBox = document.getElementById('routeMap');
+    var dx = (nums[2] - nums[0]) / 500 * mapBox.clientWidth;
+    var dy = (nums[3] - nums[1]) / 440 * mapBox.clientHeight;
+    origin.style.setProperty('--hd', (Math.atan2(dx, -dy) * 180 / Math.PI).toFixed(1) + 'deg');
+  }
+  // 같은 도착지에서 코스 변경 버튼이 돌며 다른 코스를 받는다
+  function changeCourse() {
+    courseBtn.classList.add('spin');
+    setTimeout(function () {
+      idx += 1;
+      apply();
+      courseBtn.classList.remove('spin');
+    }, 520);
+  }
+  // 다음 도착지로 바꾸고 첫 코스부터 다시 그린다
+  function nextDest() {
+    key = ORDER[(ORDER.indexOf(key) + 1) % ORDER.length];
+    idx = 0;
+    chips.forEach(function (c) { c.classList.toggle('on', c.getAttribute('data-route') === key); });
+    apply();
+  }
+  window.addEventListener('resize', function () { apply(); });
+  apply();
+
+  var DETAIL = {
+    1: ['타원 범위 + BallTree', '출발지와 도착지를 두 초점으로 하는 타원(기본 1.5km) 안의 핫스팟을 후보로 추립니다. 단속 CCTV 대수와 반경 200m 내 인접 CCTV 수로 매긴 오염도 점수에서 우회 거리를 뺀 종합 점수가 가장 높은 2곳을 선정합니다.'],
+    2: ['회피 구역 147개 + Safe Swap', '회피 구역(공업지대) 안의 핫스팟은 점수를 크게 깎아 후보에서 제외합니다. 연결한 경로가 회피 구역을 지나면 선정한 핫스팟을 다음 순위 후보로 교체해 최대 5회까지 다시 계산합니다.'],
+    3: ['Tmap 보행자 + 네이버 지도', '선정한 2곳을 보행자 경로로 연결하고, 도착지 깃발 위에 거리와 예상 시간을 표시합니다. 코스 변경을 누르면 다른 코스를 다시 추천합니다.']
+  };
+  var map = document.getElementById('routeMap');
+  var tabs = document.querySelectorAll('.algo-step');
+  var tag = document.getElementById('algoTag');
+  var text = document.getElementById('algoText');
+  var step = 1;
+  var turn = 0;
+  var timer = null;
+  function select(n) {
+    step = n;
+    map.setAttribute('data-step', String(n));
+    tabs.forEach(function (t) { t.classList.toggle('on', Number(t.getAttribute('data-step')) === n); });
+    tag.textContent = DETAIL[n][0];
+    text.textContent = DETAIL[n][1];
+    if (n === 3) {
+      line.classList.remove('draw');
+      void line.getBoundingClientRect();
+      line.classList.add('draw');
+    }
+  }
+  function tick() {
+    if (step < 3) { select(step + 1); return; }
+    if (turn % 2 === 0) changeCourse(); else nextDest();
+    turn += 1;
+    select(1);
+  }
+  if (REDUCE || !HAS_IO) return;
+  new IntersectionObserver(function (entries) {
+    clearInterval(timer);
+    if (entries[0].isIntersecting) timer = setInterval(tick, 3200);
+  }, { threshold: 0.4 }).observe(map);
+})();
+
+// 핵심 기술 02: 실시간 인식 화면에서 촬영 → 확인 시트에서 일반쓰레기 1개를 직접 더함 → 담기 순서로 저절로 시연한다.
+// 분류 카드나 인식 상자를 누르면 시연을 멈추고 같은 종류를 강조하며, 화면 밖으로 나갔다 다시 들어오면 시연을 이어 간다.
+(function () {
+  var NAMES = { plastic: '플라스틱', can: '캔', paper: '종이', glass: '유리', trash: '일반쓰레기' };
+  var vf = document.getElementById('viewfinder');
+  var boxes = vf.querySelectorAll('.bbox');
+  var cards = document.querySelectorAll('.waste');
+  var sheet = document.getElementById('camSheet');
+  var save = document.getElementById('sheetSave');
+  var total = document.getElementById('camTotal');
+  // 실시간 인식 사진 속 물건: 페트병 2, 캔 1, 종이 1, 유리병 1
+  var counts = { plastic: 2, can: 1, paper: 1, glass: 1, trash: 0 };
+
+  function focus(cat) {
+    var same = vf.classList.contains('focus') && vf.getAttribute('data-cat') === cat;
+    vf.classList.toggle('focus', !same);
+    vf.setAttribute('data-cat', same ? '' : cat);
+    boxes.forEach(function (b) { b.classList.toggle('on', !same && b.getAttribute('data-cat') === cat); });
+    cards.forEach(function (c) { c.classList.toggle('on', !same && c.getAttribute('data-target') === cat); });
+    setSheet(false);
+  }
+  boxes.forEach(function (b) { b.addEventListener('click', function () { halt(); focus(b.getAttribute('data-cat')); }); });
+  cards.forEach(function (c) { c.addEventListener('click', function () { halt(); focus(c.getAttribute('data-target')); }); });
+
+  function setSheet(open) {
+    sheet.classList.toggle('open', open);
+  }
+  document.getElementById('shutter').addEventListener('click', function () { setSheet(true); });
+  document.getElementById('sheetRetry').addEventListener('click', function () { setSheet(false); });
+  save.addEventListener('click', function () { setSheet(false); });
+
+  function refresh(changed) {
+    var sum = 0;
+    var kinds = 0;
+    Object.keys(counts).forEach(function (k) {
+      sum += counts[k];
+      if (counts[k] > 0) kinds += 1;
+      var chip = document.querySelector('.chip[data-cat="' + k + '"]');
+      chip.querySelector('b').textContent = counts[k];
+      chip.classList.toggle('zero', counts[k] === 0);
+      if (k === changed) { chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump'); }
+    });
+    // 쓰레기 1개당 20P (앱 ActivityPoints.perTrash)
+    save.textContent = sum + '개 담기';
+    total.textContent = kinds + '종 · ' + sum + '개';
+  }
+  sheet.querySelectorAll('.cs-row').forEach(function (row) {
+    var cat = row.getAttribute('data-cat');
+    var num = row.querySelector('.stepper b');
+    var note = row.querySelector('small');
+    row.querySelectorAll('.stepper button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var next = Math.max(0, Math.min(99, counts[cat] + Number(btn.getAttribute('data-d'))));
+        if (next === counts[cat]) return;
+        counts[cat] = next;
+        num.textContent = next;
+        note.textContent = '직접 고쳤어요';
+        refresh(cat);
+      });
+    });
+  });
+  refresh();
+
+  var screenEl = vf.closest('.cam-screen');
+  var tap = screenEl.querySelector('.tap');
+  var shutter = document.getElementById('shutter');
+  var trashRow = sheet.querySelector('.cs-row[data-cat="trash"]');
+  var plus = trashRow.querySelector('.stepper button[data-d="1"]');
+  var ORIGINAL = { plastic: 2, can: 1, paper: 1, glass: 1, trash: 0 };
+  var timer = null;
+  var running = false;
+  // 처음 인식된 상태로 되돌린다
+  function reset() {
+    Object.keys(ORIGINAL).forEach(function (k) {
+      counts[k] = ORIGINAL[k];
+      var row = sheet.querySelector('.cs-row[data-cat="' + k + '"]');
+      row.querySelector('.stepper b').textContent = ORIGINAL[k];
+      row.querySelector('small').textContent = k === 'trash' ? '직접 더할 수 있어요' : '인식된 그대로예요';
+    });
+    refresh();
+  }
+  // 누를 자리에 동그라미를 띄우고 버튼을 살짝 눌렀다 뗀다
+  function press(el, then) {
+    var r = el.getBoundingClientRect();
+    var box = screenEl.getBoundingClientRect();
+    tap.style.left = ((r.left + r.width / 2 - box.left) / box.width * 100) + '%';
+    tap.style.top = ((r.top + r.height / 2 - box.top) / box.height * 100) + '%';
+    tap.classList.remove('go');
+    void tap.offsetWidth;
+    tap.classList.add('go');
+    el.classList.add('pressed');
+    timer = setTimeout(function () { el.classList.remove('pressed'); then(); }, 420);
+  }
+  function wait(ms, then) { timer = setTimeout(then, ms); }
+  function play() {
+    if (!running) return;
+    reset();
+    setSheet(false);
+    wait(2600, function () {
+      press(shutter, function () {
+        setSheet(true);
+        wait(1500, function () {
+          press(plus, function () {
+            plus.click();
+            wait(1700, function () {
+              press(save, function () {
+                save.click();
+                // 시트가 내려간 뒤 실시간 인식 화면을 처음 인식된 상태로 돌려놓는다
+                wait(450, function () {
+                  reset();
+                  wait(1800, play);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+  function halt() {
+    running = false;
+    clearTimeout(timer);
+    tap.classList.remove('go');
+  }
+  // 사용자가 화면 안을 직접 누르면 시연을 멈춘다. 시연이 부르는 click()은 isTrusted가 false라 걸리지 않는다.
+  screenEl.addEventListener('click', function (e) { if (e.isTrusted) halt(); }, true);
+  if (REDUCE || !HAS_IO) return;
+  new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      if (!running) {
+        running = true;
+        vf.classList.remove('focus');
+        boxes.forEach(function (b) { b.classList.remove('on'); });
+        cards.forEach(function (c) { c.classList.remove('on'); });
+        play();
+      }
+    } else halt();
+  }, { threshold: 0.35 }).observe(screenEl);
+})();
+
+// 목차: 지금 보고 있는 부분의 목차만 진하게 한다. 화면 위에서 35% 지점을 지나는 섹션을 기준으로 삼는다.
+(function () {
+  var nav = document.getElementById('navLinks');
+  var links = {};
+  nav.querySelectorAll('a').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+  // 목차에 없는 섹션은 내용이 속한 목차로 묶는다
+  var GROUP = { concept: 'concept', features: 'features', impact: 'features', how: 'features', route: 'route', vision: 'route',
+    reward: 'features', together: 'features', record: 'features', design: 'design', character: 'character' };
+  var sections = Object.keys(GROUP).map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  var current = null;
+  var queued = false;
+  function update() {
+    queued = false;
+    var y = window.innerHeight * 0.35;
+    var hit = null;
+    sections.forEach(function (sec) {
+      var r = sec.getBoundingClientRect();
+      if (r.top <= y && r.bottom > y) hit = GROUP[sec.id];
+    });
+    if (hit === current) return;
+    current = hit;
+    Object.keys(links).forEach(function (k) {
+      links[k].classList.toggle('on', k === hit);
+      if (k === hit) links[k].setAttribute('aria-current', 'true'); else links[k].removeAttribute('aria-current');
+    });
+    nav.classList.toggle('has-on', !!hit);
+  }
+  window.addEventListener('scroll', function () {
+    if (!queued) { queued = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// 뱃지와 네 가지 문제 상자: 화면에 보이는 동안 왼쪽 위부터 하나씩 같은 속도로 살짝 떴다가 내려앉는다.
+// 앞 상자가 내려앉은 뒤 다음 상자가 뜨고, 한 바퀴를 돌면 잠깐 쉬었다가 다시 시작한다.
+(function () {
+  if (REDUCE || !HAS_IO) return;
+  function liftInTurn(box, items, gap, rest) {
+    var timer = null;
+    var k = 0;
+    function tick() {
+      // 마우스를 올려 직접 보는 동안은 순서를 멈춘다
+      if (box.matches(':hover')) { timer = setTimeout(tick, gap); return; }
+      var el = items[k];
+      el.dispatchEvent(new CustomEvent('lift'));
+      el.classList.remove('lift');
+      void el.offsetWidth;
+      el.classList.add('lift');
+      k = (k + 1) % items.length;
+      timer = setTimeout(tick, k === 0 ? gap + rest : gap);
+    }
+    new IntersectionObserver(function (entries) {
+      clearTimeout(timer);
+      if (entries[0].isIntersecting) { k = 0; timer = setTimeout(tick, 400); }
+    }, { threshold: 0.3 }).observe(box);
+  }
+  liftInTurn(document.querySelector('.badges'), document.querySelectorAll('.badge'), 560, 1200);
+  liftInTurn(document.querySelector('.problems'), document.querySelectorAll('.problem'), 1100, 1600);
+})();
+
+// 뱃지: 누르거나 마우스를 올리면 획득 조건을 보여 준다
+(function () {
+  var out = document.getElementById('badgeCond');
+  var badges = document.querySelectorAll('.badge');
+  function show(b) {
+    badges.forEach(function (x) { x.classList.toggle('on', x === b); });
+    out.innerHTML = '';
+    var name = document.createElement('b');
+    name.textContent = b.getAttribute('data-name');
+    out.appendChild(name);
+    out.appendChild(document.createTextNode(b.getAttribute('data-cond')));
+  }
+  badges.forEach(function (b) {
+    b.addEventListener('click', function () { show(b); });
+    b.addEventListener('mouseenter', function () { show(b); });
+    b.addEventListener('focus', function () { show(b); });
+    b.addEventListener('lift', function () { show(b); });
+  });
+})();
+
+// 부드러운 스크롤: 휠 한 번에 평소의 70%만 내려가고 미끄러지듯 멈춘다. 움직임 줄이기 설정이면 쓰지 않는다.
+(function () {
+  if (REDUCE || typeof window.Lenis !== 'function') return;
+  var lenis = new window.Lenis({ lerp: 0.075, wheelMultiplier: 0.7, smoothWheel: true });
+  (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(performance.now());
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href');
+      var target = id.length > 1 ? document.querySelector(id) : null;
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: -68 });
+    });
+  });
+})();
+</script>
+
+</body></html>
